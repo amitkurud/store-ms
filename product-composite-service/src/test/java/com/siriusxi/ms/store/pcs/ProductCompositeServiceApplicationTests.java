@@ -3,14 +3,13 @@ package com.siriusxi.ms.store.pcs;
 import com.siriusxi.ms.store.api.core.product.Product;
 import com.siriusxi.ms.store.api.core.recommendation.Recommendation;
 import com.siriusxi.ms.store.api.core.review.Review;
-import com.siriusxi.ms.store.pcs.services.ProductCompositeIntegration;
+import com.siriusxi.ms.store.pcs.integration.ProductCompositeIntegration;
 import com.siriusxi.ms.store.util.exceptions.InvalidInputException;
 import com.siriusxi.ms.store.util.exceptions.NotFoundException;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -20,83 +19,83 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
-@SpringBootTest(webEnvironment=RANDOM_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 class ProductCompositeServiceApplicationTests ***REMOVED***
 
-	private static final int PRODUCT_ID_OK = 1;
-	private static final int PRODUCT_ID_NOT_FOUND = 2;
-	private static final int PRODUCT_ID_INVALID = 3;
+    private static final int PRODUCT_ID_OK = 1;
+    private static final int PRODUCT_ID_NOT_FOUND = 2;
+    private static final int PRODUCT_ID_INVALID = 3;
 
-	@Autowired
-	private WebTestClient client;
+    @Autowired
+    private WebTestClient client;
 
-	@MockBean
-	private static ProductCompositeIntegration compositeIntegration;
+    @MockBean
+    private ProductCompositeIntegration compositeIntegration;
 
-	@BeforeAll
-	static void setUp() ***REMOVED***
+    @BeforeEach
+    void setUp() ***REMOVED***
 
-		when(compositeIntegration.getProduct(PRODUCT_ID_OK)).
-				thenReturn(new Product(PRODUCT_ID_OK, "name", 1, "mock-address"));
+        when(compositeIntegration.getProduct(PRODUCT_ID_OK)).
+                thenReturn(new Product(PRODUCT_ID_OK, "name", 1, "mock-address"));
 
-		when(compositeIntegration.getRecommendations(PRODUCT_ID_OK)).
-				thenReturn(singletonList(new Recommendation(PRODUCT_ID_OK,
-						1, "author",
-						1, "content", "mock address")));
+        when(compositeIntegration.getRecommendations(PRODUCT_ID_OK)).
+                thenReturn(singletonList(new Recommendation(PRODUCT_ID_OK,
+                        1, "author",
+                        1, "content", "mock address")));
 
-		when(compositeIntegration.getReviews(PRODUCT_ID_OK)).
-				thenReturn(singletonList(new Review(PRODUCT_ID_OK, 1,
-						"author", "subject", "content",
-						"mock address")));
+        when(compositeIntegration.getReviews(PRODUCT_ID_OK)).
+                thenReturn(singletonList(new Review(PRODUCT_ID_OK, 1,
+                        "author", "subject", "content",
+                        "mock address")));
 
-		when(compositeIntegration.getProduct(PRODUCT_ID_NOT_FOUND))
-				.thenThrow(new NotFoundException("NOT FOUND: " + PRODUCT_ID_NOT_FOUND));
+        when(compositeIntegration.getProduct(PRODUCT_ID_NOT_FOUND))
+                .thenThrow(new NotFoundException("NOT FOUND: " + PRODUCT_ID_NOT_FOUND));
 
-		when(compositeIntegration.getProduct(PRODUCT_ID_INVALID))
-				.thenThrow(new InvalidInputException("INVALID: " + PRODUCT_ID_INVALID));
-	***REMOVED***
+        when(compositeIntegration.getProduct(PRODUCT_ID_INVALID))
+                .thenThrow(new InvalidInputException("INVALID: " + PRODUCT_ID_INVALID));
+***REMOVED***
 
-	@Test
-	public void getProductById() ***REMOVED***
+    @Test
+    public void getProductById() ***REMOVED***
 
-		client.get()
-				.uri("/product-composite/" + PRODUCT_ID_OK)
-				.accept(APPLICATION_JSON)
-				.exchange()
-				.expectStatus().isOk()
-				.expectHeader().contentType(APPLICATION_JSON)
-				.expectBody()
-				.jsonPath("$.productId").isEqualTo(PRODUCT_ID_OK)
-				.jsonPath("$.recommendations.length()").isEqualTo(1)
-				.jsonPath("$.reviews.length()").isEqualTo(1);
-	***REMOVED***
+        client.get()
+                .uri("/product-composite/" + PRODUCT_ID_OK)
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.productId").isEqualTo(PRODUCT_ID_OK)
+                .jsonPath("$.recommendations.length()").isEqualTo(1)
+                .jsonPath("$.reviews.length()").isEqualTo(1);
+***REMOVED***
 
-	@Test
-	public void getProductNotFound() ***REMOVED***
+    @Test
+    public void getProductNotFound() ***REMOVED***
 
-		client.get()
-				.uri("/product-composite/" + PRODUCT_ID_NOT_FOUND)
-				.accept(APPLICATION_JSON)
-				.exchange()
-				.expectStatus().isNotFound()
-				.expectHeader().contentType(APPLICATION_JSON)
-				.expectBody()
-				.jsonPath("$.path").isEqualTo("/product-composite/" + PRODUCT_ID_NOT_FOUND)
-				.jsonPath("$.message").isEqualTo("NOT FOUND: " + PRODUCT_ID_NOT_FOUND);
-	***REMOVED***
+        client.get()
+                .uri("/product-composite/" + PRODUCT_ID_NOT_FOUND)
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectHeader().contentType(APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.path").isEqualTo("/product-composite/" + PRODUCT_ID_NOT_FOUND)
+                .jsonPath("$.message").isEqualTo("NOT FOUND: " + PRODUCT_ID_NOT_FOUND);
+***REMOVED***
 
-	@Test
-	public void getProductInvalidInput() ***REMOVED***
+    @Test
+    public void getProductInvalidInput() ***REMOVED***
 
-		client.get()
-				.uri("/product-composite/" + PRODUCT_ID_INVALID)
-				.accept(APPLICATION_JSON)
-				.exchange()
-				.expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
-				.expectHeader().contentType(APPLICATION_JSON)
-				.expectBody()
-				.jsonPath("$.path").isEqualTo("/product-composite/" + PRODUCT_ID_INVALID)
-				.jsonPath("$.message").isEqualTo("INVALID: " + PRODUCT_ID_INVALID);
-	***REMOVED***
+        client.get()
+                .uri("/product-composite/" + PRODUCT_ID_INVALID)
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectHeader().contentType(APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.path").isEqualTo("/product-composite/" + PRODUCT_ID_INVALID)
+                .jsonPath("$.message").isEqualTo("INVALID: " + PRODUCT_ID_INVALID);
+***REMOVED***
 
 ***REMOVED***
