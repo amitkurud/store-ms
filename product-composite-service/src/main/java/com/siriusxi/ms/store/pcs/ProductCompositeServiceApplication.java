@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 public class ProductCompositeServiceApplication ***REMOVED***
 
 	@Bean
-	RestTemplate restTemplate() ***REMOVED***
+	RestTemplate newRestClient() ***REMOVED***
 		return new RestTemplate();
 	***REMOVED***
 
