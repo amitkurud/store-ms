@@ -26,5 +26,6 @@ management:
 ***REMOVED***
 spring:
   profiles: docker
+
 server:
   port: 8080
