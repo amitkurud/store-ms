@@ -2,13 +2,15 @@
 ## Author: Mohamed Taman
 ## version: v1.0
 ### Sample usage:
-#
-#   ***REMOVED*** PORT=9080 ./test-em-all.bash
+#   for local run
+#     ***REMOVED*** PORT=9080 ./test-em-all.bash
+#   with docker compose
+#       ***REMOVED*** PORT=8080 ./test-em-all.bash start stop
 #
 echo -e "Starting [Springy Store] full functionality testing***REMOVED***.\n"
 
 : $***REMOVED******REMOVED******REMOVED***
-: $***REMOVED***PORT=9080***REMOVED***
+: $***REMOVED***PORT=8080***REMOVED***
 
 function assertCurl() ***REMOVED***
 
@@ -48,10 +50,53 @@ function assertEqual() ***REMOVED***
   fi
 ***REMOVED***
 
+function testUrl() ***REMOVED***
+    url=$@
+    if curl $***REMOVED***url***REMOVED*** -ks -f -o /dev/null
+    then
+          echo "Ok"
+          return 0
+    else
+          echo -n "not yet"
+          return 1
+    fi;
+***REMOVED***
+
+function waitForService() ***REMOVED***
+    url=$@
+    echo -n "Wait for: $url***REMOVED*** "
+    n=0
+    until testUrl $***REMOVED***url***REMOVED***
+    do
+        n=$((n + 1))
+        if [[ $***REMOVED***n***REMOVED*** == 100 ]]
+        then
+            echo " Give up"
+            exit 1
+        else
+            sleep 6
+            echo -n ", retry #$n "
+        fi
+    done
+***REMOVED***
+
 set -e
+
+echo "Start:" `date`
 
 echo "HOST=$***REMOVED***HOST***REMOVED***"
 echo "PORT=$***REMOVED***PORT***REMOVED***"
+
+if [[ $@ == *"start"* ]]
+then
+    echo "***REMOVED***"
+    echo "$ docker-compose down"
+    docker-compose down
+    echo "$ docker-compose up -d"
+    docker-compose up -d
+fi
+
+waitForService http://$***REMOVED***HOST***REMOVED***:$***REMOVED***PORT***REMOVED***/product-composite/1
 
 # Verify that a normal request works, expect three recommendations and three reviews
 assertCurl 200 "curl http://$HOST:$PORT/product-composite/1 -s"
@@ -82,3 +127,11 @@ assertEqual "\"Invalid productId: -1\"" "$(echo $***REMOVED***RESPONSE***REMOVED
 assertCurl 400 "curl http://$HOST:$PORT/product-composite/invalidProductId -s"
 assertEqual "\"Type mismatch.\"" "$(echo $***REMOVED***RESPONSE***REMOVED*** | jq .message)"
 
+if [[ $@ == *"stop"* ]]
+then
+    echo "We are done, stopping the test environment***REMOVED***"
+    echo "$ docker-compose down"
+    docker-compose down
+fi
+
+echo "End:" `date`
