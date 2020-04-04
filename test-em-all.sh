@@ -92,7 +92,7 @@ then
     echo "***REMOVED***"
     echo "$ docker-compose down"
     docker-compose down
-    echo "$ docker-compose up -d"
+    echo "***REMOVED***"
     docker-compose up -d
 fi
 
