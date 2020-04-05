@@ -18,10 +18,13 @@ RUN java -Djarmode=layertools -jar --enable-preview application.jar extract
 # ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
 # Build image based on JDK 14 base image, based on latest debian buster OS
 FROM openjdk:14-slim-buster
-MAINTAINER Mohamed Taman <mohamed.taman@gmail.com>
 
-# Set image information
-LABEL version="0.1.beta" name="Product Service"
+# Set image information, but could be set to different location from command line
+ARG IMAGE_VERSION="0.0.1-SNAPSHOT"
+ARG IMAGE_NAME="Product Composite Service"
+ARG MAINTAINER="Mohamed Taman <mohamed.taman@gmail.com>"
+
+LABEL version=$***REMOVED***IMAGE_VERSION***REMOVED*** name=$***REMOVED***IMAGE_NAME***REMOVED*** maintainer=$***REMOVED***MAINTAINER***REMOVED***
 
 # Limiting security access to not user root user
 RUN addgroup siriusxi && useradd -g siriusxi -ms /bin/bash taman
@@ -41,7 +44,9 @@ COPY --from=builder temp/application/ ./
 # Expose current application to port 8080
 EXPOSE 8080
 
-# Run the application
+ARG JAVA_OPTS=""
+
+# Run the application with JVM configs if any
 ENTRYPOINT ["bash", "-c", \
 "java -server --enable-preview -XX:+UseContainerSupport \
 -XX:+AlwaysActAsServerClassMachine -XX:+UseG1GC -XX:+UseStringDeduplication $***REMOVED***JAVA_OPTS***REMOVED*** \
