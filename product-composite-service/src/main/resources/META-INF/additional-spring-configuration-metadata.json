@@ -1,0 +1,33 @@
+***REMOVED***
+  "properties": [
+    ***REMOVED***
+      "name": "app.product-service.host",
+      "type": "java.lang.String",
+      "description": "Description for app.product-service.host."
+***REMOVED***
+    ***REMOVED***
+      "name": "app.product-service.port",
+      "type": "java.lang.Integer",
+      "description": "Description for app.product-service.port."
+***REMOVED***
+    ***REMOVED***
+      "name": "app.recommendation-service.host",
+      "type": "java.lang.String",
+      "description": "Description for app.recommendation-service.host."
+***REMOVED***
+    ***REMOVED***
+      "name": "app.recommendation-service.port",
+      "type": "java.lang.Integer",
+      "description": "Description for app.recommendation-service.port."
+***REMOVED***
+    ***REMOVED***
+      "name": "app.review-service.host",
+      "type": "java.lang.String",
+      "description": "Description for app.review-service.host."
+***REMOVED***
+    ***REMOVED***
+      "name": "app.review-service.port",
+      "type": "java.lang.Integer",
+      "description": "Description for app.review-service.port."
+***REMOVED***
+  ] ***REMOVED***
