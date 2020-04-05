@@ -43,4 +43,6 @@ EXPOSE 8080
 
 # Run the application
 ENTRYPOINT ["bash", "-c", \
-"java --enable-preview $***REMOVED***JAVA_OPTS***REMOVED*** org.springframework.boot.loader.JarLauncher $***REMOVED***0***REMOVED*** $***REMOVED***@***REMOVED***"]
+"java -server --enable-preview -XX:+UseContainerSupport \
+-XX:+AlwaysActAsServerClassMachine -XX:+UseG1GC -XX:+UseStringDeduplication $***REMOVED***JAVA_OPTS***REMOVED*** \
+org.springframework.boot.loader.JarLauncher $***REMOVED***0***REMOVED*** $***REMOVED***@***REMOVED***"]

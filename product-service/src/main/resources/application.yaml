@@ -26,6 +26,8 @@ management:
 ***REMOVED***
 spring:
   profiles: docker
+  jmx:
+    enabled: false
 
 server:
   port: 8080

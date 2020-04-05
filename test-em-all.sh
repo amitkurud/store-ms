@@ -5,7 +5,7 @@
 #   for local run
 #     ***REMOVED*** PORT=9080 ./test-em-all.bash
 #   with docker compose
-#       ***REMOVED*** PORT=8080 ./test-em-all.bash start stop
+#     ***REMOVED*** PORT=8080 ./test-em-all.bash start stop
 #
 echo -e "Starting [Springy Store] full functionality testing***REMOVED***.\n"
 
