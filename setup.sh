@@ -12,5 +12,5 @@ echo -e "***REMOVED***\n"
 echo "3- Installing [parent project] module***REMOVED***"
 cd ../store-chassis && mvn -N --quiet clean install
 echo -e "***REMOVED***\n"
-echo -e "Wooohooo, building & installing all project modules are finished successfully.\n\
-and the project is ready for the next step. :)"
+echo -e "***REMOVED***\n\
+***REMOVED***"
