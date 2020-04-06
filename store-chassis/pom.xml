@@ -13,9 +13,9 @@
     <groupId>com.siriusxi.ms.store</groupId>
     <artifactId>store-chassis</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
     <name>Springy Store Chassis</name>
     <description>Parent pom project for Springy μServices</description>
+    <packaging>pom</packaging>
 
     <modules>
         <module>../product-composite-service</module>
@@ -35,7 +35,7 @@
         <dockerfile-maven-version>1.4.13</dockerfile-maven-version>
 
         <!--  Custom properties  -->
-        <maintainer.name>Mohamed Taman</maintainer.name>
+        <maintainer.name>"Mohamed Taman"</maintainer.name>
         <maintainer.email>mohamed.taman@gmail.com</maintainer.email>
         <docker.repo.image.prefix>siriusxi</docker.repo.image.prefix>
         <docker.image.default.tag>latest</docker.image.default.tag>
@@ -191,7 +191,7 @@
                         <JAR_FILE>target/$***REMOVED***project.build.finalName***REMOVED***.jar</JAR_FILE>
                         <IMAGE_VERSION>$***REMOVED***project.version***REMOVED***</IMAGE_VERSION>
                         <IMAGE_NAME>$***REMOVED***project.name***REMOVED***</IMAGE_NAME>
-                        <MAINTAINER>"$***REMOVED***maintainer.name***REMOVED*** ($***REMOVED***maintainer.email***REMOVED***)"</MAINTAINER>
+                        <MAINTAINER>$***REMOVED***maintainer.name***REMOVED*** ($***REMOVED***maintainer.email***REMOVED***)</MAINTAINER>
                     </buildArgs>
                 </configuration>
             </plugin>
