@@ -6,8 +6,7 @@ echo -e "Starting [Springy Store] μServices ***REMOVED***.\n\
 ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***\n"
 
 function runService()***REMOVED***
-   cd "$1" && \
-   mvn --quiet spring-boot:run -Dspring-boot.run.jvmArguments="--enable-preview"
+   ./mvnw --quiet spring-boot:run -Dspring-boot.run.jvmArguments="--enable-preview" -f $1
 ***REMOVED***
 
 for dir in `find *-service -maxdepth 0 -type d`
