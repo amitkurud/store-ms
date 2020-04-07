@@ -8,8 +8,8 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan("com.siriusxi.ms.store")
 public class ProductServiceApplication ***REMOVED***
 
-	public static void main(String[] args) ***REMOVED***
-		SpringApplication.run(ProductServiceApplication.class, args);
-	***REMOVED***
+    public static void main(String[] args) ***REMOVED***
+        SpringApplication.run(ProductServiceApplication.class, args);
+***REMOVED***
 
 ***REMOVED***

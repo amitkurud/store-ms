@@ -29,7 +29,7 @@ public class RecommendationServiceImpl implements RecommendationService ***REMOV
 
         if (productId == 113) ***REMOVED***
             log.debug("No recommendations found for productId: ***REMOVED******REMOVED***", productId);
-            return  new ArrayList<>();
+            return new ArrayList<>();
     ***REMOVED***
 
         List<Recommendation> list = new ArrayList<>();
