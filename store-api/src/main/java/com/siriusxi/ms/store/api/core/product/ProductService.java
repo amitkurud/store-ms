@@ -11,7 +11,7 @@ public interface ProductService ***REMOVED***
      * @return the product, if found, else null.
      */
     @GetMapping(
-            value    = "/product/***REMOVED***productId***REMOVED***",
-            produces =  "application/json")
+            value = "/product/***REMOVED***productId***REMOVED***",
+            produces = "application/json")
     Product getProduct(@PathVariable int productId);
 ***REMOVED***
