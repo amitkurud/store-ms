@@ -1,13 +1,15 @@
 package com.siriusxi.ms.store.pcs.integration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.siriusxi.ms.store.api.core.product.Product;
 import com.siriusxi.ms.store.api.core.product.ProductService;
 import com.siriusxi.ms.store.api.core.recommendation.Recommendation;
 import com.siriusxi.ms.store.api.core.recommendation.RecommendationService;
 import com.siriusxi.ms.store.api.core.review.Review;
 import com.siriusxi.ms.store.api.core.review.ReviewService;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.siriusxi.ms.store.util.exceptions.InvalidInputException;
+import com.siriusxi.ms.store.util.exceptions.NotFoundException;
+import com.siriusxi.ms.store.util.http.HttpErrorInfo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,15 +18,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.siriusxi.ms.store.util.exceptions.InvalidInputException;
-import com.siriusxi.ms.store.util.exceptions.NotFoundException;
-import com.siriusxi.ms.store.util.http.HttpErrorInfo;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.String.*;
+import static java.lang.String.valueOf;
 import static org.springframework.http.HttpMethod.GET;
 
 @Component
@@ -48,24 +46,24 @@ public class ProductCompositeIntegration
             ObjectMapper mapper,
 
             @Value("$***REMOVED***app.product-service.host***REMOVED***") String productServiceHost,
-            @Value("$***REMOVED***app.product-service.port***REMOVED***") int    productServicePort,
+            @Value("$***REMOVED***app.product-service.port***REMOVED***") int productServicePort,
 
             @Value("$***REMOVED***app.recommendation-service.host***REMOVED***") String recommendationServiceHost,
-            @Value("$***REMOVED***app.recommendation-service.port***REMOVED***") int    recommendationServicePort,
+            @Value("$***REMOVED***app.recommendation-service.port***REMOVED***") int recommendationServicePort,
 
             @Value("$***REMOVED***app.review-service.host***REMOVED***") String reviewServiceHost,
-            @Value("$***REMOVED***app.review-service.port***REMOVED***") int    reviewServicePort
+            @Value("$***REMOVED***app.review-service.port***REMOVED***") int reviewServicePort
     ) ***REMOVED***
 
         this.restTemplate = restTemplate;
         this.mapper = mapper;
 
         var http = "http://";
-        productServiceUrl        = http.concat(productServiceHost).concat(":").concat(valueOf(productServicePort))
+        productServiceUrl = http.concat(productServiceHost).concat(":").concat(valueOf(productServicePort))
                 .concat("/product/");
         recommendationServiceUrl = http.concat(recommendationServiceHost).concat(":")
                 .concat(valueOf(recommendationServicePort)).concat("/recommendation?productId=");
-        reviewServiceUrl         = http.concat(reviewServiceHost).concat(":").concat(valueOf(reviewServicePort))
+        reviewServiceUrl = http.concat(reviewServiceHost).concat(":").concat(valueOf(reviewServicePort))
                 .concat("/review?productId=");
 ***REMOVED***
 
@@ -104,7 +102,8 @@ public class ProductCompositeIntegration
             log.debug("Will call getRecommendations API on URL: ***REMOVED******REMOVED***", url);
             List<Recommendation> recommendations = restTemplate
                     .exchange(url, GET, null,
-                            new ParameterizedTypeReference<List<Recommendation>>() ***REMOVED******REMOVED***)
+                            new ParameterizedTypeReference<List<Recommendation>>() ***REMOVED***
+                        ***REMOVED***)
                     .getBody();
 
             log.debug("Found ***REMOVED******REMOVED*** recommendations for a product with id: ***REMOVED******REMOVED***",
@@ -132,7 +131,8 @@ public class ProductCompositeIntegration
                     url,
                     GET,
                     null,
-                    new ParameterizedTypeReference<List<Review>>() ***REMOVED******REMOVED***)
+                    new ParameterizedTypeReference<List<Review>>() ***REMOVED***
+                ***REMOVED***)
                     .getBody();
 
             log.debug("Found ***REMOVED******REMOVED*** reviews for a product with id: ***REMOVED******REMOVED***",

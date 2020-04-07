@@ -29,7 +29,7 @@ public class ReviewServiceImpl implements ReviewService ***REMOVED***
 
         if (productId == 213) ***REMOVED***
             log.debug("No reviews found for productId: ***REMOVED******REMOVED***", productId);
-            return  new ArrayList<>();
+            return new ArrayList<>();
     ***REMOVED***
 
         List<Review> list = new ArrayList<>();

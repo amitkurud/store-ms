@@ -13,7 +13,7 @@ public interface ProductCompositeService ***REMOVED***
      * @return the composite product info, if found, else null.
      */
     @GetMapping(
-            value    = "/product-composite/***REMOVED***productId***REMOVED***",
+            value = "/product-composite/***REMOVED***productId***REMOVED***",
             produces = "application/json")
     ProductAggregate getProduct(@PathVariable int productId);
 ***REMOVED***
