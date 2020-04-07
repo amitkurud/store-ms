@@ -36,7 +36,7 @@
         <!--  Dependencies versions properties  -->
         <maven.plugin.dockerfile.version>1.4.13</maven.plugin.dockerfile.version>
         <maven.plugin.properties.version>1.0.0</maven.plugin.properties.version>
-      
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <dependencies>
@@ -115,7 +115,7 @@
                 <plugin>
                     <groupId>com.spotify</groupId>
                     <artifactId>dockerfile-maven-plugin</artifactId>
-                    <version>$***REMOVED***dockerfile-maven-version***REMOVED***</version>
+                    <version>$***REMOVED***maven.plugin.dockerfile.version***REMOVED***</version>
                     <configuration>
                         <dockerfile>Dockerfile</dockerfile>
                         <repository>$***REMOVED***docker.repo.image.prefix***REMOVED***/$***REMOVED***project.artifactId***REMOVED***</repository>
@@ -201,6 +201,9 @@
                     <exists>$***REMOVED***basedir***REMOVED***/Dockerfile</exists>
                 </file>
             </activation>
+            <properties>
+                <maven.install.skip>true</maven.install.skip>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -229,7 +232,7 @@
                             </execution>
                             <execution>
                                 <id>push-image</id>
-                                <phase>verify</phase>
+                                <phase>deploy</phase>
                                 <goals>
                                     <goal>push</goal>
                                 </goals>
