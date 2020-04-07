@@ -9,7 +9,7 @@ echo -e "***REMOVED***\n"
 echo "2- Installing shared [APIs] module***REMOVED***"
 ./mvnw --quiet clean install -f store-api || exit 126
 echo -e "***REMOVED***\n"
-echo "3- Installing [parent project] module***REMOVED***"
+echo "3- Installing [Parent] module***REMOVED***"
 ./mvnw --quiet clean install -N -f store-chassis || exit 126
 echo -e "***REMOVED***\n"
 echo -e "***REMOVED***\n\
