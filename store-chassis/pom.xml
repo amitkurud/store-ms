@@ -36,16 +36,11 @@
         <!--  Dependencies versions properties  -->
         <maven.plugin.dockerfile.version>1.4.13</maven.plugin.dockerfile.version>
         <maven.plugin.properties.version>1.0.0</maven.plugin.properties.version>
-
-        <!--  Custom properties  -->
-        <skip.dockerization>true</skip.dockerization>
-        <skip.image.build>true</skip.image.build>
-        <skip.image.tag>true</skip.image.tag>
-        <skip.image.push>true</skip.image.push>
+      
     </properties>
 
     <dependencies>
-        <!-- End - development dependencies -->
+        <!-- Start - Development dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -57,7 +52,7 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- End - development dependencies -->
+        <!-- End - Development dependencies -->
 
         <!-- Start - Core dependencies -->
         <dependency>
@@ -90,6 +85,7 @@
             <scope>test</scope>
         </dependency>
         <!-- End - Testing dependencies -->
+      
         <!-- Start - Store application business dependencies -->
         <dependency>
             <groupId>com.siriusxi.ms.store</groupId>
@@ -110,10 +106,31 @@
             <optional>true</optional>
         </dependency>
         <!-- End - Other dependencies -->
-
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Start - Of product dockerization -->
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>dockerfile-maven-plugin</artifactId>
+                    <version>$***REMOVED***dockerfile-maven-version***REMOVED***</version>
+                    <configuration>
+                        <dockerfile>Dockerfile</dockerfile>
+                        <repository>$***REMOVED***docker.repo.image.prefix***REMOVED***/$***REMOVED***project.artifactId***REMOVED***</repository>
+                        <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+                        <buildArgs>
+                            <JAR_FILE>target/$***REMOVED***project.build.finalName***REMOVED***.jar</JAR_FILE>
+                            <IMAGE_VERSION>$***REMOVED***project.version***REMOVED***</IMAGE_VERSION>
+                            <IMAGE_NAME>$***REMOVED***project.name***REMOVED***</IMAGE_NAME>
+                            <MAINTAINER>$***REMOVED***maintainer.name***REMOVED*** ($***REMOVED***maintainer.email***REMOVED***)</MAINTAINER>
+                        </buildArgs>
+                    </configuration>
+                </plugin>
+                <!-- End - Of product dockerization -->
+            </plugins>
+        </pluginManagement>
         <plugins>
             <!-- Start - reading external properties -->
             <plugin>
@@ -137,7 +154,8 @@
                 </executions>
             </plugin>
             <!-- End - reading external properties -->
-            <plugin>
+            
+          <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
@@ -147,8 +165,8 @@
                     </layers>
                 </configuration>
             </plugin>
-
-            <plugin>
+            
+          <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <release>$***REMOVED***java.version***REMOVED***</release>
@@ -157,80 +175,73 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
-            <plugin>
+            
+          <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <argLine>--enable-preview</argLine>
                 </configuration>
             </plugin>
-            <plugin>
+            
+          <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <argLine>--enable-preview</argLine>
                 </configuration>
             </plugin>
 
-            <!-- Start - docker image build plugin -->
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>$***REMOVED***maven.plugin.dockerfile.version***REMOVED***</version>
-                <executions>
-                    <execution>
-                        <id>build-image</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                        <configuration>
-                            <skipBuild>$***REMOVED***skip.image.build***REMOVED***</skipBuild>
-                            <repository>$***REMOVED***docker.repo.image.prefix***REMOVED***/$***REMOVED***project.artifactId***REMOVED***
-                            </repository>
-                            <tag>$***REMOVED***docker.image.default.tag***REMOVED***</tag>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>tag-image</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>tag</goal>
-                        </goals>
-                        <configuration>
-                            <skipTag>$***REMOVED***skip.image.tag***REMOVED***</skipTag>
-                            <tag>$***REMOVED***project.version***REMOVED***</tag>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>push-image</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>push</goal>
-                        </goals>
-                        <configuration>
-                            <skipPush>$***REMOVED***skip.image.push***REMOVED***</skipPush>
-                            <tag>$***REMOVED***project.version***REMOVED***</tag>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <skip>$***REMOVED***skip.dockerization***REMOVED***</skip>
-                    <dockerfile>Dockerfile</dockerfile>
-                    <repository>$***REMOVED***docker.repo.image.prefix***REMOVED***/$***REMOVED***project.artifactId***REMOVED***</repository>
-                    <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
-                    <buildArgs>
-                        <JAR_FILE>target/$***REMOVED***project.build.finalName***REMOVED***.jar</JAR_FILE>
-                        <IMAGE_VERSION>$***REMOVED***project.version***REMOVED***</IMAGE_VERSION>
-                        <IMAGE_NAME>$***REMOVED***project.name***REMOVED***</IMAGE_NAME>
-                        <MAINTAINER>$***REMOVED***maintainer.name***REMOVED*** ($***REMOVED***maintainer.email***REMOVED***)</MAINTAINER>
-                    </buildArgs>
-                </configuration>
-            </plugin>
-            <!-- End - docker image build plugin -->
-
         </plugins>
     </build>
-
-    <repositories>
+    <!-- Project profiles definition -->
+    <profiles>
+        <profile>
+            <id>docker-build</id>
+            <activation>
+                <file>
+                    <exists>$***REMOVED***basedir***REMOVED***/Dockerfile</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.spotify</groupId>
+                        <artifactId>dockerfile-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>build-image</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <configuration>
+                                    <tag>$***REMOVED***docker.image.default.tag***REMOVED***</tag>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>tag-image</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>tag</goal>
+                                </goals>
+                                <configuration>
+                                    <tag>$***REMOVED***project.version***REMOVED***</tag>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>push-image</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>push</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    
+  <repositories>
         <repository>
             <id>spring-milestones</id>
             <name>Spring Milestones</name>
@@ -245,5 +256,4 @@
             <url>https://repo.spring.io/milestone</url>
         </pluginRepository>
     </pluginRepositories>
-
 </project>
