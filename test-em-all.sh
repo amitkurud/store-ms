@@ -93,45 +93,45 @@ then
     echo "$ docker-compose down"
     docker-compose down
     echo "***REMOVED***"
-    docker-compose up -d
+    docker-compose -p ssm up -d
 fi
 
-waitForService http://$***REMOVED***HOST***REMOVED***:$***REMOVED***PORT***REMOVED***/product-composite/1
+waitForService http://$***REMOVED***HOST***REMOVED***:$***REMOVED***PORT***REMOVED***/v1/product-composite/1
 
 # Verify that a normal request works, expect three recommendations and three reviews
-assertCurl 200 "curl http://$HOST:$PORT/product-composite/1 -s"
+assertCurl 200 "curl http://$HOST:$PORT/v1/product-composite/1 -s"
 assertEqual 1 $(echo $***REMOVED***RESPONSE***REMOVED*** | jq .productId)
 assertEqual 3 $(echo $***REMOVED***RESPONSE***REMOVED*** | jq ".recommendations | length")
 assertEqual 3 $(echo $***REMOVED***RESPONSE***REMOVED*** | jq ".reviews | length")
 
 # Verify that a 404 (Not Found) error is returned for a non existing productId (13)
-assertCurl 404 "curl http://$HOST:$PORT/product-composite/13 -s"
+assertCurl 404 "curl http://$HOST:$PORT/v1/product-composite/13 -s"
 
 # Verify that no recommendations are returned for productId 113
-assertCurl 200 "curl http://$HOST:$PORT/product-composite/113 -s"
+assertCurl 200 "curl http://$HOST:$PORT/v1/product-composite/113 -s"
 assertEqual 113 $(echo $***REMOVED***RESPONSE***REMOVED*** | jq .productId)
 assertEqual 0 $(echo $***REMOVED***RESPONSE***REMOVED*** | jq ".recommendations | length")
 assertEqual 3 $(echo $***REMOVED***RESPONSE***REMOVED*** | jq ".reviews | length")
 
 # Verify that no reviews are returned for productId 213
-assertCurl 200 "curl http://$HOST:$PORT/product-composite/213 -s"
+assertCurl 200 "curl http://$HOST:$PORT/v1/product-composite/213 -s"
 assertEqual 213 $(echo $***REMOVED***RESPONSE***REMOVED*** | jq .productId)
 assertEqual 3 $(echo $***REMOVED***RESPONSE***REMOVED*** | jq ".recommendations | length")
 assertEqual 0 $(echo $***REMOVED***RESPONSE***REMOVED*** | jq ".reviews | length")
 
 # Verify that a 422 (Unprocessable Entity) error is returned for a productId that is out of range (-1)
-assertCurl 422 "curl http://$HOST:$PORT/product-composite/-1 -s"
+assertCurl 422 "curl http://$HOST:$PORT/v1/product-composite/-1 -s"
 assertEqual "\"Invalid productId: -1\"" "$(echo $***REMOVED***RESPONSE***REMOVED*** | jq .message)"
 
 # Verify that a 400 (Bad Request) error error is returned for a productId that is not a number, i.e. invalid format
-assertCurl 400 "curl http://$HOST:$PORT/product-composite/invalidProductId -s"
+assertCurl 400 "curl http://$HOST:$PORT/v1/product-composite/invalidProductId -s"
 assertEqual "\"Type mismatch.\"" "$(echo $***REMOVED***RESPONSE***REMOVED*** | jq .message)"
 
 if [[ $@ == *"stop"* ]]
 then
     echo "We are done, stopping the test environment***REMOVED***"
     echo "$ docker-compose down"
-    docker-compose down
+    docker-compose -p ssm down
 fi
 
 echo "End:" `date`
