@@ -1,7 +1,10 @@
 package com.siriusxi.ms.store.ps.controller;
 
+import com.mongodb.DuplicateKeyException;
 import com.siriusxi.ms.store.api.core.product.Product;
 import com.siriusxi.ms.store.api.core.product.ProductService;
+import com.siriusxi.ms.store.ps.persistence.ProductEntity;
+import com.siriusxi.ms.store.ps.persistence.ProductRepository;
 import com.siriusxi.ms.store.util.exceptions.InvalidInputException;
 import com.siriusxi.ms.store.util.exceptions.NotFoundException;
 import com.siriusxi.ms.store.util.http.ServiceUtil;
@@ -15,20 +18,51 @@ public class ProductServiceImpl implements ProductService ***REMOVED***
 
     private final ServiceUtil serviceUtil;
 
+    private final ProductRepository repository;
+
+    private final ProductMapper mapper;
+
     @Autowired
-    public ProductServiceImpl(ServiceUtil serviceUtil) ***REMOVED***
+    public ProductServiceImpl(ProductRepository repository,
+                              ProductMapper mapper,
+                              ServiceUtil serviceUtil) ***REMOVED***
+        this.repository = repository;
+        this.mapper = mapper;
         this.serviceUtil = serviceUtil;
 ***REMOVED***
 
     @Override
-    public Product getProduct(int productId) ***REMOVED***
-        log.debug("/product returns the found product for productId=***REMOVED******REMOVED***", productId);
+    public Product createProduct(Product body) ***REMOVED***
+        try ***REMOVED***
+            ProductEntity entity = mapper.apiToEntity(body);
+            ProductEntity newEntity = repository.save(entity);
 
+            log.debug("createProduct: entity created for productId: ***REMOVED******REMOVED***", body.getProductId());
+            return mapper.entityToApi(newEntity);
+
+    ***REMOVED*** catch (DuplicateKeyException dke) ***REMOVED***
+            throw new InvalidInputException("Duplicate key, Product Id: " + body.getProductId());
+    ***REMOVED***
+***REMOVED***
+
+    @Override
+    public Product getProduct(int productId) ***REMOVED***
         if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
 
-        if (productId == 13)
-            throw new NotFoundException("No product found for productId: " + productId);
+        ProductEntity entity = repository.findByProductId(productId)
+                .orElseThrow(() -> new NotFoundException("No product found for productId: " + productId));
 
-        return new Product(productId, "name-" + productId, 123, serviceUtil.getServiceAddress());
+        Product response = mapper.entityToApi(entity);
+        response.setServiceAddress(serviceUtil.getServiceAddress());
+
+        log.debug("getProduct: found productId: ***REMOVED******REMOVED***", response.getProductId());
+
+        return response;
+***REMOVED***
+
+    @Override
+    public void deleteProduct(int productId) ***REMOVED***
+        log.debug("deleteProduct: tries to delete an entity with productId: ***REMOVED******REMOVED***", productId);
+        repository.findByProductId(productId).ifPresent(repository::delete);
 ***REMOVED***
 ***REMOVED***
