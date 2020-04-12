@@ -1,0 +1,109 @@
+***REMOVED***
+  "properties": [
+    ***REMOVED***
+      "name": "app.product-service.host",
+      "type": "java.lang.String",
+      "description": "Description for app.product-service.host."
+***REMOVED***
+    ***REMOVED***
+      "name": "app.product-service.port",
+      "type": "java.lang.Integer",
+      "description": "Description for app.product-service.port."
+***REMOVED***
+    ***REMOVED***
+      "name": "app.recommendation-service.host",
+      "type": "java.lang.String",
+      "description": "Description for app.recommendation-service.host."
+***REMOVED***
+    ***REMOVED***
+      "name": "app.recommendation-service.port",
+      "type": "java.lang.Integer",
+      "description": "Description for app.recommendation-service.port."
+***REMOVED***
+    ***REMOVED***
+      "name": "app.review-service.host",
+      "type": "java.lang.String",
+      "description": "Description for app.review-service.host."
+***REMOVED***
+    ***REMOVED***
+      "name": "app.review-service.port",
+      "type": "java.lang.Integer",
+      "description": "Description for app.review-service.port."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.common.version",
+      "type": "java.lang.String",
+      "description": "Description for api.common.version."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.common.title",
+      "type": "java.lang.String",
+      "description": "Description for api.common.title."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.common.description",
+      "type": "java.lang.String",
+      "description": "Description for api.common.description."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.common.termsOfServiceUrl",
+      "type": "java.lang.String",
+      "description": "Description for api.common.termsOfServiceUrl."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.common.license",
+      "type": "java.lang.String",
+      "description": "Description for api.common.license."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.common.licenseUrl",
+      "type": "java.lang.String",
+      "description": "Description for api.common.licenseUrl."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.common.contact.name",
+      "type": "java.lang.String",
+      "description": "Description for api.common.contact.name."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.common.contact.url",
+      "type": "java.lang.String",
+      "description": "Description for api.common.contact.url."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.common.contact.email",
+      "type": "java.lang.String",
+      "description": "Description for api.common.contact.email."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.product-composite.get-composite-product.description",
+      "type": "java.lang.String",
+      "description": "Description for api.product-composite.get-composite-product.description."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.product-composite.get-composite-product.notes",
+      "type": "java.lang.String",
+      "description": "Description for api.product-composite.get-composite-product.notes."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.product-composite.create-composite-product.description",
+      "type": "java.lang.String",
+      "description": "Description for api.product-composite.get-composite-product.create-composite-product.description."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.product-composite.create-composite-product.notes",
+      "type": "java.lang.String",
+      "description": "Description for api.product-composite.get-composite-product.create-composite-product.notes."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.product-composite.delete-composite-product.description",
+      "type": "java.lang.String",
+      "description": "Description for api.product-composite.delete-composite-product.description."
+***REMOVED***
+    ***REMOVED***
+      "name": "api.product-composite.delete-composite-product.notes",
+      "type": "java.lang.String",
+      "description": "Description for api.product-composite.delete-composite-product.notes."
+***REMOVED***
+  ]
+***REMOVED***
