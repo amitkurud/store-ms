@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
@@ -18,6 +19,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
     properties = ***REMOVED***"spring.datasource.url=jdbc:h2:mem:review-db"***REMOVED***)
+@ActiveProfiles("test")
 class ReviewServiceApplicationTests ***REMOVED***
 
   private final String BASE_URI = "/reviews";
