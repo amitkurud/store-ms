@@ -13,31 +13,60 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
+/**
+ * The class Global controller exception handler is a generic and central point for all
+ * microservices that handles all services exceptions.
+ *
+ * It act as filter so it is pluggable component just added to microservice context automatically,
+ * when you add <code>ComponentScan</code> on your application.
+ *
+ * @see org.springframework.context.annotation.ComponentScan
+ * @author mohamed.taman
+ * @version v1.3
+ * @since v0.1
+ */
 @RestControllerAdvice
 @Log4j2
 class GlobalControllerExceptionHandler ***REMOVED***
 
-    @ResponseStatus(NOT_FOUND)
-    @ExceptionHandler(NotFoundException.class)
-    public @ResponseBody
-    HttpErrorInfo handleNotFoundExceptions(ServerHttpRequest request, Exception ex) ***REMOVED***
+  /**
+   * Method to handle <i>not found exceptions</i> http error info.
+   *
+   * @param request the request to get some request information
+   * @param ex the ex to get its information
+   * @return the http error information.
+   * @since v0.1
+   */
+  @ResponseStatus(NOT_FOUND)
+  @ExceptionHandler(NotFoundException.class)
+  public @ResponseBody HttpErrorInfo handleNotFoundExceptions(
+      ServerHttpRequest request, Exception ex) ***REMOVED***
 
-        return createHttpErrorInfo(NOT_FOUND, request, ex);
+    return createHttpErrorInfo(NOT_FOUND, request, ex);
 ***REMOVED***
 
-    @ResponseStatus(UNPROCESSABLE_ENTITY)
-    @ExceptionHandler(InvalidInputException.class)
-    public @ResponseBody
-    HttpErrorInfo handleInvalidInputException(ServerHttpRequest request, Exception ex) ***REMOVED***
+  /**
+   * Method to handle <i>invalid input exception</i> http error info.
+   *
+   * @param request the request to get some request information
+   * @param ex the ex to get its information
+   * @return the http error information.
+   * @since v0.1
+   */
+  @ResponseStatus(UNPROCESSABLE_ENTITY)
+  @ExceptionHandler(InvalidInputException.class)
+  public @ResponseBody HttpErrorInfo handleInvalidInputException(
+      ServerHttpRequest request, Exception ex) ***REMOVED***
 
-        return createHttpErrorInfo(UNPROCESSABLE_ENTITY, request, ex);
+    return createHttpErrorInfo(UNPROCESSABLE_ENTITY, request, ex);
 ***REMOVED***
 
-    private HttpErrorInfo createHttpErrorInfo(HttpStatus httpStatus, ServerHttpRequest request, Exception ex) ***REMOVED***
-        final String path = request.getPath().pathWithinApplication().value();
-        final String message = ex.getMessage();
+  private HttpErrorInfo createHttpErrorInfo(
+      HttpStatus httpStatus, ServerHttpRequest request, Exception ex) ***REMOVED***
+    final String path = request.getPath().pathWithinApplication().value();
+    final String message = ex.getMessage();
 
-        log.debug("Returning HTTP status: ***REMOVED******REMOVED*** for path: ***REMOVED******REMOVED***, message: ***REMOVED******REMOVED***", httpStatus, path, message);
-        return new HttpErrorInfo(httpStatus, path, message);
+    log.debug("Returning HTTP status: ***REMOVED******REMOVED*** for path: ***REMOVED******REMOVED***, message: ***REMOVED******REMOVED***", httpStatus, path, message);
+    return new HttpErrorInfo(httpStatus, path, message);
 ***REMOVED***
 ***REMOVED***

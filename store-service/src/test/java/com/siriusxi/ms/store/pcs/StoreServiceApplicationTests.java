@@ -28,119 +28,132 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class StoreServiceApplicationTests ***REMOVED***
 
-    private static final int PRODUCT_ID_OK = 1;
-    private static final int PRODUCT_ID_NOT_FOUND = 2;
-    private static final int PRODUCT_ID_INVALID = 3;
+  public static final String BASE_URL = "/store/api/v1/products/";
+  private static final int PRODUCT_ID_OK = 1;
+  private static final int PRODUCT_ID_NOT_FOUND = 2;
+  private static final int PRODUCT_ID_INVALID = 3;
+  @Autowired private WebTestClient client;
 
-    public static final String BASE_URL = "/store/api/v1/products/";
+  @MockBean private StoreIntegration storeIntegration;
 
-    @Autowired
-    private WebTestClient client;
+  @BeforeEach
+  void setUp() ***REMOVED***
 
-    @MockBean
-    private StoreIntegration storeIntegration;
+    when(storeIntegration.getProduct(PRODUCT_ID_OK))
+        .thenReturn(new Product(PRODUCT_ID_OK, "name", 1, "mock-address"));
 
-    @BeforeEach
-    void setUp() ***REMOVED***
+    when(storeIntegration.getRecommendations(PRODUCT_ID_OK))
+        .thenReturn(
+            singletonList(
+                new Recommendation(PRODUCT_ID_OK, 1, "author", 1, "content", "mock address")));
 
-        when(storeIntegration.getProduct(PRODUCT_ID_OK)).
-                thenReturn(new Product(PRODUCT_ID_OK, "name", 1, "mock-address"));
+    when(storeIntegration.getReviews(PRODUCT_ID_OK))
+        .thenReturn(
+            singletonList(
+                new Review(PRODUCT_ID_OK, 1, "author", "subject", "content", "mock address")));
 
-        when(storeIntegration.getRecommendations(PRODUCT_ID_OK)).
-                thenReturn(singletonList(new Recommendation(PRODUCT_ID_OK,
-                        1, "author",
-                        1, "content", "mock address")));
+    when(storeIntegration.getProduct(PRODUCT_ID_NOT_FOUND))
+        .thenThrow(new NotFoundException("NOT FOUND: " + PRODUCT_ID_NOT_FOUND));
 
-        when(storeIntegration.getReviews(PRODUCT_ID_OK)).
-                thenReturn(singletonList(new Review(PRODUCT_ID_OK, 1,
-                        "author", "subject", "content",
-                        "mock address")));
-
-        when(storeIntegration.getProduct(PRODUCT_ID_NOT_FOUND))
-                .thenThrow(new NotFoundException("NOT FOUND: " + PRODUCT_ID_NOT_FOUND));
-
-        when(storeIntegration.getProduct(PRODUCT_ID_INVALID))
-                .thenThrow(new InvalidInputException("INVALID: " + PRODUCT_ID_INVALID));
+    when(storeIntegration.getProduct(PRODUCT_ID_INVALID))
+        .thenThrow(new InvalidInputException("INVALID: " + PRODUCT_ID_INVALID));
 ***REMOVED***
 
-    @Test
-    public void createCompositeProduct1() ***REMOVED***
+  @Test
+  public void createCompositeProduct1() ***REMOVED***
 
-        ProductAggregate compositeProduct = new ProductAggregate(1, "name", 1,
-                null, null, null);
+    ProductAggregate compositeProduct = new ProductAggregate(1, "name", 1, null, null, null);
 
-        postAndVerifyProductIsCreated(compositeProduct);
+    postAndVerifyProductIsCreated(compositeProduct);
 ***REMOVED***
 
-    @Test
-    public void createCompositeProduct2() ***REMOVED***
-        ProductAggregate compositeProduct = new ProductAggregate(1, "name", 1,
-                singletonList(new RecommendationSummary(1, "a", 1, "c")),
-                singletonList(new ReviewSummary(1, "a", "s", "c")), null);
+  @Test
+  public void createCompositeProduct2() ***REMOVED***
+    ProductAggregate compositeProduct =
+        new ProductAggregate(
+            1,
+            "name",
+            1,
+            singletonList(new RecommendationSummary(1, "a", 1, "c")),
+            singletonList(new ReviewSummary(1, "a", "s", "c")),
+            null);
 
-        postAndVerifyProductIsCreated(compositeProduct);
+    postAndVerifyProductIsCreated(compositeProduct);
 ***REMOVED***
 
-    @Test
-    public void deleteCompositeProduct() ***REMOVED***
-        ProductAggregate compositeProduct = new ProductAggregate(1, "name", 1,
-                singletonList(new RecommendationSummary(1, "a", 1, "c")),
-                singletonList(new ReviewSummary(1, "a", "s", "c")), null);
+  @Test
+  public void deleteCompositeProduct() ***REMOVED***
+    ProductAggregate compositeProduct =
+        new ProductAggregate(
+            1,
+            "name",
+            1,
+            singletonList(new RecommendationSummary(1, "a", 1, "c")),
+            singletonList(new ReviewSummary(1, "a", "s", "c")),
+            null);
 
-        postAndVerifyProductIsCreated(compositeProduct);
+    postAndVerifyProductIsCreated(compositeProduct);
 
-        deleteAndVerifyProductIsDeleted(compositeProduct.getProductId());
-        deleteAndVerifyProductIsDeleted(compositeProduct.getProductId());
+    deleteAndVerifyProductIsDeleted(compositeProduct.getProductId());
+    deleteAndVerifyProductIsDeleted(compositeProduct.getProductId());
 ***REMOVED***
 
-    @Test
-    public void getProductById() ***REMOVED***
+  @Test
+  public void getProductById() ***REMOVED***
 
-        getAndVerifyProduct(PRODUCT_ID_OK, OK)
-                .jsonPath("$.productId").isEqualTo(PRODUCT_ID_OK)
-                .jsonPath("$.recommendations.length()").isEqualTo(1)
-                .jsonPath("$.reviews.length()").isEqualTo(1);
+    getAndVerifyProduct(PRODUCT_ID_OK, OK)
+        .jsonPath("$.productId")
+        .isEqualTo(PRODUCT_ID_OK)
+        .jsonPath("$.recommendations.length()")
+        .isEqualTo(1)
+        .jsonPath("$.reviews.length()")
+        .isEqualTo(1);
 ***REMOVED***
 
-    @Test
-    public void getProductNotFound() ***REMOVED***
+  @Test
+  public void getProductNotFound() ***REMOVED***
 
-        getAndVerifyProduct(PRODUCT_ID_NOT_FOUND, NOT_FOUND)
-                .jsonPath("$.path").isEqualTo(BASE_URL + PRODUCT_ID_NOT_FOUND)
-                .jsonPath("$.message").isEqualTo("NOT FOUND: " + PRODUCT_ID_NOT_FOUND);
+    getAndVerifyProduct(PRODUCT_ID_NOT_FOUND, NOT_FOUND)
+        .jsonPath("$.path")
+        .isEqualTo(BASE_URL + PRODUCT_ID_NOT_FOUND)
+        .jsonPath("$.message")
+        .isEqualTo("NOT FOUND: " + PRODUCT_ID_NOT_FOUND);
 ***REMOVED***
 
-    @Test
-    public void getProductInvalidInput() ***REMOVED***
+  @Test
+  public void getProductInvalidInput() ***REMOVED***
 
-        getAndVerifyProduct(PRODUCT_ID_INVALID, UNPROCESSABLE_ENTITY)
-                .jsonPath("$.path").isEqualTo(BASE_URL + PRODUCT_ID_INVALID)
-                .jsonPath("$.message").isEqualTo("INVALID: " + PRODUCT_ID_INVALID);
+    getAndVerifyProduct(PRODUCT_ID_INVALID, UNPROCESSABLE_ENTITY)
+        .jsonPath("$.path")
+        .isEqualTo(BASE_URL + PRODUCT_ID_INVALID)
+        .jsonPath("$.message")
+        .isEqualTo("INVALID: " + PRODUCT_ID_INVALID);
 ***REMOVED***
 
-    private BodyContentSpec getAndVerifyProduct(int productId, HttpStatus expectedStatus) ***REMOVED***
-        return client.get()
-                .uri(BASE_URL + productId)
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isEqualTo(expectedStatus)
-                .expectHeader().contentType(APPLICATION_JSON)
-                .expectBody();
+  private BodyContentSpec getAndVerifyProduct(int productId, HttpStatus expectedStatus) ***REMOVED***
+    return client
+        .get()
+        .uri(BASE_URL + productId)
+        .accept(APPLICATION_JSON)
+        .exchange()
+        .expectStatus()
+        .isEqualTo(expectedStatus)
+        .expectHeader()
+        .contentType(APPLICATION_JSON)
+        .expectBody();
 ***REMOVED***
 
-    private void postAndVerifyProductIsCreated(ProductAggregate compositeProduct) ***REMOVED***
-        client.post()
-                .uri(BASE_URL)
-                .body(Mono.just(compositeProduct), ProductAggregate.class)
-                .exchange()
-                .expectStatus().isEqualTo(OK);
+  private void postAndVerifyProductIsCreated(ProductAggregate compositeProduct) ***REMOVED***
+    client
+        .post()
+        .uri(BASE_URL)
+        .body(Mono.just(compositeProduct), ProductAggregate.class)
+        .exchange()
+        .expectStatus()
+        .isEqualTo(OK);
 ***REMOVED***
 
-    private void deleteAndVerifyProductIsDeleted(int productId) ***REMOVED***
-        client.delete()
-                .uri(BASE_URL + productId)
-                .exchange()
-                .expectStatus().isEqualTo(OK);
+  private void deleteAndVerifyProductIsDeleted(int productId) ***REMOVED***
+    client.delete().uri(BASE_URL + productId).exchange().expectStatus().isEqualTo(OK);
 ***REMOVED***
-
 ***REMOVED***

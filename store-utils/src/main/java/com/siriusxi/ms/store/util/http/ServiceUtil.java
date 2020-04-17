@@ -11,37 +11,35 @@ import java.net.UnknownHostException;
 @Component
 @Log4j2
 public class ServiceUtil ***REMOVED***
-    private final String port;
+  private final String port;
 
-    private String serviceAddress = null;
+  private String serviceAddress = null;
 
-    @Autowired
-    public ServiceUtil(
-            @Value("$***REMOVED***server.port***REMOVED***") String port) ***REMOVED***
-        this.port = port;
+  @Autowired
+  public ServiceUtil(@Value("$***REMOVED***server.port***REMOVED***") String port) ***REMOVED***
+    this.port = port;
 ***REMOVED***
 
-    public String getServiceAddress() ***REMOVED***
-        if (serviceAddress == null) ***REMOVED***
-            serviceAddress = findMyHostname() + "/" + findMyIpAddress() + ":" + port;
-    ***REMOVED***
-        return serviceAddress;
+  public String getServiceAddress() ***REMOVED***
+    if (serviceAddress == null) ***REMOVED***
+      serviceAddress = findMyHostname() + "/" + findMyIpAddress() + ":" + port;
+***REMOVED***
+    return serviceAddress;
 ***REMOVED***
 
-    private String findMyHostname() ***REMOVED***
-        try ***REMOVED***
-            return InetAddress.getLocalHost().getHostName();
-    ***REMOVED*** catch (UnknownHostException e) ***REMOVED***
-            return "unknown host name";
-    ***REMOVED***
+  private String findMyHostname() ***REMOVED***
+    try ***REMOVED***
+      return InetAddress.getLocalHost().getHostName();
+***REMOVED*** catch (UnknownHostException e) ***REMOVED***
+      return "unknown host name";
+***REMOVED***
 ***REMOVED***
 
-    private String findMyIpAddress() ***REMOVED***
-        try ***REMOVED***
-            return InetAddress.getLocalHost().getHostAddress();
-    ***REMOVED*** catch (UnknownHostException e) ***REMOVED***
-            return "unknown IP address";
-    ***REMOVED***
+  private String findMyIpAddress() ***REMOVED***
+    try ***REMOVED***
+      return InetAddress.getLocalHost().getHostAddress();
+***REMOVED*** catch (UnknownHostException e) ***REMOVED***
+      return "unknown IP address";
 ***REMOVED***
-
+***REMOVED***
 ***REMOVED***
