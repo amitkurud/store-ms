@@ -63,8 +63,8 @@ class GlobalControllerExceptionHandler ***REMOVED***
 
   private HttpErrorInfo createHttpErrorInfo(
       HttpStatus httpStatus, ServerHttpRequest request, Exception ex) ***REMOVED***
-    final String path = request.getPath().pathWithinApplication().value();
-    final String message = ex.getMessage();
+    final var path = request.getPath().pathWithinApplication().value();
+    final var message = ex.getMessage();
 
     log.debug("Returning HTTP status: ***REMOVED******REMOVED*** for path: ***REMOVED******REMOVED***, message: ***REMOVED******REMOVED***", httpStatus, path, message);
     return new HttpErrorInfo(httpStatus, path, message);

@@ -32,9 +32,12 @@ class StoreServiceApplicationTests ***REMOVED***
   private static final int PRODUCT_ID_OK = 1;
   private static final int PRODUCT_ID_NOT_FOUND = 2;
   private static final int PRODUCT_ID_INVALID = 3;
-  @Autowired private WebTestClient client;
 
-  @MockBean private StoreIntegration storeIntegration;
+  @Autowired
+  private WebTestClient client;
+
+  @MockBean
+  private StoreIntegration storeIntegration;
 
   @BeforeEach
   void setUp() ***REMOVED***
@@ -62,14 +65,14 @@ class StoreServiceApplicationTests ***REMOVED***
   @Test
   public void createCompositeProduct1() ***REMOVED***
 
-    ProductAggregate compositeProduct = new ProductAggregate(1, "name", 1, null, null, null);
+    var compositeProduct = new ProductAggregate(1, "name", 1, null, null, null);
 
     postAndVerifyProductIsCreated(compositeProduct);
 ***REMOVED***
 
   @Test
   public void createCompositeProduct2() ***REMOVED***
-    ProductAggregate compositeProduct =
+    var compositeProduct =
         new ProductAggregate(
             1,
             "name",
@@ -83,7 +86,7 @@ class StoreServiceApplicationTests ***REMOVED***
 
   @Test
   public void deleteCompositeProduct() ***REMOVED***
-    ProductAggregate compositeProduct =
+    var compositeProduct =
         new ProductAggregate(
             1,
             "name",

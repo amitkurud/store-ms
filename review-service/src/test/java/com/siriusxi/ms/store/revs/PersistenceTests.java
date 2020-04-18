@@ -34,7 +34,7 @@ public class PersistenceTests ***REMOVED***
   public void setupDb() ***REMOVED***
     repository.deleteAll();
 
-    ReviewEntity entity = new ReviewEntity(1, 2, "amazon", "s", "c");
+    var entity = new ReviewEntity(1, 2, "amazon", "s", "c");
     savedEntity = repository.save(entity);
 
     assertEquals(entity, savedEntity);
@@ -43,26 +43,23 @@ public class PersistenceTests ***REMOVED***
   @Test
   public void create() ***REMOVED***
 
-    ReviewEntity newEntity = new ReviewEntity(1, 3, "amazon 1", "s", "c");
+    var newEntity = new ReviewEntity(1, 3, "amazon 1", "s", "c");
     repository.save(newEntity);
 
     Optional<ReviewEntity> entity = repository.findById(newEntity.getId());
-    ReviewEntity foundEntity = new ReviewEntity();
-    if(entity.isPresent()) foundEntity = entity.get();
 
-    assertEquals(newEntity, foundEntity);
+    assertEquals(newEntity, entity.orElse(new ReviewEntity()));
 
     assertEquals(2, repository.count());
 ***REMOVED***
 
   @Test
   public void update() ***REMOVED***
+
     savedEntity.setAuthor("amazon 2");
     repository.save(savedEntity);
 
-    Optional<ReviewEntity> entity = repository.findById(savedEntity.getId());
-    ReviewEntity foundEntity = new ReviewEntity();
-    if(entity.isPresent()) foundEntity = entity.get();
+    var foundEntity = repository.findById(savedEntity.getId()).orElse(new ReviewEntity());
 
     assertEquals(1, (long) foundEntity.getVersion());
     assertEquals("amazon 2", foundEntity.getAuthor());
@@ -71,6 +68,7 @@ public class PersistenceTests ***REMOVED***
   @Test
   public void delete() ***REMOVED***
     repository.delete(savedEntity);
+
     assertFalse(repository.existsById(savedEntity.getId()));
 ***REMOVED***
 
@@ -86,34 +84,28 @@ public class PersistenceTests ***REMOVED***
   public void duplicateError() ***REMOVED***
 
     Assertions.assertThrows(
-        DataIntegrityViolationException.class,
-        () -> ***REMOVED***
-          ReviewEntity entity = new ReviewEntity(1, 2, "amazon 1", "s", "c");
-          repository.save(entity);
-    ***REMOVED***);
+            DataIntegrityViolationException.class,
+            () -> repository.save(new ReviewEntity(
+                    1, 2, "amazon 1",
+                    "s", "c")));
 ***REMOVED***
 
   @Test
   public void optimisticLockError() ***REMOVED***
 
-    ReviewEntity entity1 = new ReviewEntity(),
-                 entity2 = new ReviewEntity();
-
     // Store the saved entity in two separate entity objects
-    Optional<ReviewEntity> result = repository.findById(savedEntity.getId());
-    if (result.isPresent()) entity1 = result.get();
-
-    Optional<ReviewEntity> result2 = repository.findById(savedEntity.getId());
-    if (result2.isPresent()) entity2 = result2.get();
-
+    ReviewEntity entity1 = repository.findById(savedEntity.getId()).orElse(new ReviewEntity()),
+                 entity2 = repository.findById(savedEntity.getId()).orElse(new ReviewEntity());
 
     // Update the entity using the first entity object
     entity1.setAuthor("amazon 1");
     repository.save(entity1);
 
-    //  Update the entity using the second entity object.
-    // This should fail since the second entity now holds a old version number, i.e. a Optimistic
-    // Lock Error
+    /*
+      Update the entity using the second entity object.
+      This should fail since the second entity now holds a old version number,
+      i.e. a Optimistic Lock Error
+    */
     try ***REMOVED***
       entity2.setAuthor("amazon 2");
       repository.save(entity2);
@@ -123,9 +115,7 @@ public class PersistenceTests ***REMOVED***
 ***REMOVED***
 
     // Get the updated entity from the database and verify its new sate
-    Optional<ReviewEntity> foundEntity = repository.findById(savedEntity.getId());
-    ReviewEntity updatedEntity = new ReviewEntity();
-    if(foundEntity.isPresent()) updatedEntity = foundEntity.get();
+    var updatedEntity = repository.findById(savedEntity.getId()).orElse(new ReviewEntity());
 
     assertEquals(1, updatedEntity.getVersion());
     assertEquals("amazon 1", updatedEntity.getAuthor());

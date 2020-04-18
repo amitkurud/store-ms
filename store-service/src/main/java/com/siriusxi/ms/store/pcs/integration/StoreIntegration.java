@@ -29,6 +29,8 @@ import static org.springframework.http.HttpMethod.GET;
 @Log4j2
 public class StoreIntegration implements ProductService, RecommendationEndpoint, ReviewService ***REMOVED***
 
+  public static final String PRODUCT_ID_QUERY_PARAM = "?productId=";
+
   private final RestTemplate restTemplate;
   private final ObjectMapper mapper;
 
@@ -77,7 +79,7 @@ public class StoreIntegration implements ProductService, RecommendationEndpoint,
       log.debug("Will post a new product to URL: ***REMOVED******REMOVED***", url);
 
       Product product = restTemplate.postForObject(url, body, Product.class);
-      log.debug("Created a product with id: ***REMOVED******REMOVED***", product.getProductId());
+      log.debug("Created a product with id: ***REMOVED******REMOVED***", product != null ? product.getProductId() : -1);
 
       return product;
 
@@ -94,7 +96,7 @@ public class StoreIntegration implements ProductService, RecommendationEndpoint,
       log.debug("Will call the getProduct API on URL: ***REMOVED******REMOVED***", url);
 
       Product product = restTemplate.getForObject(url, Product.class);
-      log.debug("Found a product with id: ***REMOVED******REMOVED***", product.getProductId());
+      log.debug("Found a product with id: ***REMOVED******REMOVED***", product != null ? product.getProductId() : -1);
 
       return product;
 
@@ -124,7 +126,8 @@ public class StoreIntegration implements ProductService, RecommendationEndpoint,
       log.debug("Will post a new recommendation to URL: ***REMOVED******REMOVED***", url);
 
       Recommendation recommendation = restTemplate.postForObject(url, body, Recommendation.class);
-      log.debug("Created a recommendation with id: ***REMOVED******REMOVED***", recommendation.getProductId());
+      log.debug("Created a recommendation with id: ***REMOVED******REMOVED***",
+              recommendation != null ? recommendation.getRecommendationId() : -1);
 
       return recommendation;
 
@@ -137,7 +140,7 @@ public class StoreIntegration implements ProductService, RecommendationEndpoint,
   public List<Recommendation> getRecommendations(int productId) ***REMOVED***
 
     try ***REMOVED***
-      String url = recommendationServiceUrl + "?productId=" + productId;
+      String url = recommendationServiceUrl.concat(PRODUCT_ID_QUERY_PARAM).concat(valueOf(productId));
 
       log.debug("Will call the getRecommendations API on URL: ***REMOVED******REMOVED***", url);
       List<Recommendation> recommendations =
@@ -146,7 +149,7 @@ public class StoreIntegration implements ProductService, RecommendationEndpoint,
               .getBody();
 
       log.debug(
-          "Found ***REMOVED******REMOVED*** recommendations for a product with id: ***REMOVED******REMOVED***", recommendations.size(), productId);
+          "Found ***REMOVED******REMOVED*** recommendations for a product with id: ***REMOVED******REMOVED***", recommendations != null ? recommendations.size() : 0, productId);
       return recommendations;
 
 ***REMOVED*** catch (Exception ex) ***REMOVED***
@@ -160,7 +163,9 @@ public class StoreIntegration implements ProductService, RecommendationEndpoint,
   @Override
   public void deleteRecommendations(int productId) ***REMOVED***
     try ***REMOVED***
-      String url = recommendationServiceUrl + "?productId=" + productId;
+      String url = recommendationServiceUrl
+              .concat(PRODUCT_ID_QUERY_PARAM)
+              .concat(valueOf(productId));
       log.debug("Will call the deleteRecommendations API on URL: ***REMOVED******REMOVED***", url);
 
       restTemplate.delete(url);
@@ -177,8 +182,8 @@ public class StoreIntegration implements ProductService, RecommendationEndpoint,
       String url = reviewServiceUrl;
       log.debug("Will post a new review to URL: ***REMOVED******REMOVED***", url);
 
-      Review review = restTemplate.postForObject(url, body, Review.class);
-      log.debug("Created a review with id: ***REMOVED******REMOVED***", review.getProductId());
+      var review = restTemplate.postForObject(url, body, Review.class);
+      log.debug("Created a review with id: ***REMOVED******REMOVED***", review != null ? review.getProductId() : 0);
 
       return review;
 
@@ -191,7 +196,9 @@ public class StoreIntegration implements ProductService, RecommendationEndpoint,
   public List<Review> getReviews(int productId) ***REMOVED***
 
     try ***REMOVED***
-      String url = reviewServiceUrl + "?productId=" + productId;
+      String url = reviewServiceUrl
+              .concat(PRODUCT_ID_QUERY_PARAM)
+              .concat(valueOf(productId));
 
       log.debug("Will call the getReviews API on URL: ***REMOVED******REMOVED***", url);
       List<Review> reviews =
@@ -199,7 +206,7 @@ public class StoreIntegration implements ProductService, RecommendationEndpoint,
               .exchange(url, GET, null, new ParameterizedTypeReference<List<Review>>() ***REMOVED******REMOVED***)
               .getBody();
 
-      log.debug("Found ***REMOVED******REMOVED*** reviews for a product with id: ***REMOVED******REMOVED***", reviews.size(), productId);
+      log.debug("Found ***REMOVED******REMOVED*** reviews for a product with id: ***REMOVED******REMOVED***", reviews != null ? reviews.size() : 0, productId);
       return reviews;
 
 ***REMOVED*** catch (Exception ex) ***REMOVED***
@@ -212,7 +219,9 @@ public class StoreIntegration implements ProductService, RecommendationEndpoint,
   @Override
   public void deleteReviews(int productId) ***REMOVED***
     try ***REMOVED***
-      String url = reviewServiceUrl + "?productId=" + productId;
+      String url = reviewServiceUrl
+              .concat(PRODUCT_ID_QUERY_PARAM)
+              .concat(valueOf(productId));
       log.debug("Will call the deleteReviews API on URL: ***REMOVED******REMOVED***", url);
 
       restTemplate.delete(url);
@@ -223,16 +232,14 @@ public class StoreIntegration implements ProductService, RecommendationEndpoint,
 ***REMOVED***
 
   private RuntimeException handleHttpClientException(HttpClientErrorException ex) ***REMOVED***
-    switch (ex.getStatusCode()) ***REMOVED***
-      case NOT_FOUND:
-        return new NotFoundException(getErrorMessage(ex));
-      case UNPROCESSABLE_ENTITY:
-        return new InvalidInputException(getErrorMessage(ex));
-      default:
+    return switch (ex.getStatusCode()) ***REMOVED***
+      case NOT_FOUND -> new NotFoundException(getErrorMessage(ex));
+      case UNPROCESSABLE_ENTITY -> new InvalidInputException(getErrorMessage(ex));
+      default -> ***REMOVED***
         log.warn("Got a unexpected HTTP error: ***REMOVED******REMOVED***, will rethrow it", ex.getStatusCode());
         log.warn("Error body: ***REMOVED******REMOVED***", ex.getResponseBodyAsString());
-        return ex;
-***REMOVED***
+      throw ex;***REMOVED***
+***REMOVED***;
 ***REMOVED***
 
   private String getErrorMessage(HttpClientErrorException ex) ***REMOVED***

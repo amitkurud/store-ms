@@ -1,6 +1,7 @@
 package com.siriusxi.ms.store.util.exceptions;
 
 public class NotFoundException extends RuntimeException ***REMOVED***
+
   public NotFoundException() ***REMOVED******REMOVED***
 
   public NotFoundException(String message) ***REMOVED***
