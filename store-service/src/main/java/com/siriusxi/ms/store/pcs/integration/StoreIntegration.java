@@ -7,41 +7,49 @@ import com.siriusxi.ms.store.api.core.recommendation.RecommendationEndpoint;
 import com.siriusxi.ms.store.api.core.recommendation.dto.Recommendation;
 import com.siriusxi.ms.store.api.core.review.ReviewService;
 import com.siriusxi.ms.store.api.core.review.dto.Review;
+import com.siriusxi.ms.store.api.event.Event;
 import com.siriusxi.ms.store.util.exceptions.InvalidInputException;
 import com.siriusxi.ms.store.util.exceptions.NotFoundException;
 import com.siriusxi.ms.store.util.http.HttpErrorInfo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.messaging.MessageChannel;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
+import static com.siriusxi.ms.store.api.event.Event.Type.CREATE;
+import static com.siriusxi.ms.store.api.event.Event.Type.DELETE;
+import static com.siriusxi.ms.store.pcs.integration.StoreIntegration.MessageSources;
 import static java.lang.String.valueOf;
-import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.integration.support.MessageBuilder.withPayload;
+import static reactor.core.publisher.Flux.empty;
 
+@EnableBinding(MessageSources.class)
 @Component
 @Log4j2
 public class StoreIntegration implements ProductService, RecommendationEndpoint, ReviewService ***REMOVED***
 
   public static final String PRODUCT_ID_QUERY_PARAM = "?productId=";
-
-  private final RestTemplate restTemplate;
+  private final WebClient webClient;
   private final ObjectMapper mapper;
-
+  private final MessageSources messageSources;
   private final String productServiceUrl;
   private final String recommendationServiceUrl;
   private final String reviewServiceUrl;
-
   @Autowired
   public StoreIntegration(
-      RestTemplate restTemplate,
+          WebClient.Builder webClient,
       ObjectMapper mapper,
+          MessageSources messageSources,
       @Value("$***REMOVED***app.product-service.host***REMOVED***") String productServiceHost,
       @Value("$***REMOVED***app.product-service.port***REMOVED***") int productServicePort,
       @Value("$***REMOVED***app.recommendation-service.host***REMOVED***") String recommendationServiceHost,
@@ -49,204 +57,196 @@ public class StoreIntegration implements ProductService, RecommendationEndpoint,
       @Value("$***REMOVED***app.review-service.host***REMOVED***") String reviewServiceHost,
       @Value("$***REMOVED***app.review-service.port***REMOVED***") int reviewServicePort) ***REMOVED***
 
-    this.restTemplate = restTemplate;
+    this.webClient = webClient.build();
     this.mapper = mapper;
+    this.messageSources = messageSources;
 
     var http = "http://";
 
     productServiceUrl =
         http.concat(productServiceHost)
             .concat(":")
-            .concat(valueOf(productServicePort))
-            .concat("/products/");
+            .concat(valueOf(productServicePort));
     recommendationServiceUrl =
         http.concat(recommendationServiceHost)
             .concat(":")
-            .concat(valueOf(recommendationServicePort))
-            .concat("/recommendations");
+            .concat(valueOf(recommendationServicePort));
     reviewServiceUrl =
         http.concat(reviewServiceHost)
             .concat(":")
-            .concat(valueOf(reviewServicePort))
-            .concat("/reviews");
+            .concat(valueOf(reviewServicePort));
 ***REMOVED***
 
   @Override
   public Product createProduct(Product body) ***REMOVED***
-
-    try ***REMOVED***
-      String url = productServiceUrl;
-      log.debug("Will post a new product to URL: ***REMOVED******REMOVED***", url);
-
-      Product product = restTemplate.postForObject(url, body, Product.class);
-      log.debug("Created a product with id: ***REMOVED******REMOVED***", product != null ? product.getProductId() : -1);
-
-      return product;
-
-***REMOVED*** catch (HttpClientErrorException ex) ***REMOVED***
-      throw handleHttpClientException(ex);
-***REMOVED***
+    log.debug("Publishing a create event for a new product ***REMOVED******REMOVED***",body.toString());
+    messageSources
+            .outputProducts()
+            .send(withPayload(new Event<>(CREATE, body.getProductId(), body)).build());
+    return body;
 ***REMOVED***
 
   @Override
-  public Product getProduct(int productId) ***REMOVED***
+  public Mono<Product> getProduct(int productId) ***REMOVED***
 
-    try ***REMOVED***
-      String url = productServiceUrl + "/" + productId;
-      log.debug("Will call the getProduct API on URL: ***REMOVED******REMOVED***", url);
+    var url = productServiceUrl
+            .concat("/products/")
+            .concat(valueOf(productId));
 
-      Product product = restTemplate.getForObject(url, Product.class);
-      log.debug("Found a product with id: ***REMOVED******REMOVED***", product != null ? product.getProductId() : -1);
+    log.debug("Will call the getProduct API on URL: ***REMOVED******REMOVED***", url);
 
-      return product;
-
-***REMOVED*** catch (HttpClientErrorException ex) ***REMOVED***
-      throw handleHttpClientException(ex);
-***REMOVED***
+    return webClient
+            .get()
+            .uri(url)
+            .retrieve()
+            .bodyToMono(Product.class)
+            .log()
+            .onErrorMap(WebClientResponseException.class, this::handleException);
 ***REMOVED***
 
   @Override
   public void deleteProduct(int productId) ***REMOVED***
-    try ***REMOVED***
-      String url = productServiceUrl + "/" + productId;
-      log.debug("Will call the deleteProduct API on URL: ***REMOVED******REMOVED***", url);
-
-      restTemplate.delete(url);
-
-***REMOVED*** catch (HttpClientErrorException ex) ***REMOVED***
-      throw handleHttpClientException(ex);
-***REMOVED***
+    log.debug("Publishing a delete event for product id ***REMOVED******REMOVED***", productId);
+    messageSources
+            .outputProducts()
+            .send(withPayload(new Event<>(DELETE, productId, null)).build());
 ***REMOVED***
 
   @Override
   public Recommendation createRecommendation(Recommendation body) ***REMOVED***
+    log.debug("Publishing a create event for a new recommendation ***REMOVED******REMOVED***",body.toString());
 
-    try ***REMOVED***
-      String url = recommendationServiceUrl;
-      log.debug("Will post a new recommendation to URL: ***REMOVED******REMOVED***", url);
+    messageSources
+            .outputRecommendations()
+            .send(withPayload(new Event<>(CREATE, body.getProductId(), body)).build());
 
-      Recommendation recommendation = restTemplate.postForObject(url, body, Recommendation.class);
-      log.debug("Created a recommendation with id: ***REMOVED******REMOVED***",
-              recommendation != null ? recommendation.getRecommendationId() : -1);
-
-      return recommendation;
-
-***REMOVED*** catch (HttpClientErrorException ex) ***REMOVED***
-      throw handleHttpClientException(ex);
-***REMOVED***
+    return body;
 ***REMOVED***
 
   @Override
-  public List<Recommendation> getRecommendations(int productId) ***REMOVED***
+  public Flux<Recommendation> getRecommendations(int productId) ***REMOVED***
 
-    try ***REMOVED***
-      String url = recommendationServiceUrl.concat(PRODUCT_ID_QUERY_PARAM).concat(valueOf(productId));
+    var url = recommendationServiceUrl
+            .concat("/recommendations")
+            .concat(PRODUCT_ID_QUERY_PARAM)
+            .concat(valueOf(productId));
 
-      log.debug("Will call the getRecommendations API on URL: ***REMOVED******REMOVED***", url);
-      List<Recommendation> recommendations =
-          restTemplate
-              .exchange(url, GET, null, new ParameterizedTypeReference<List<Recommendation>>() ***REMOVED******REMOVED***)
-              .getBody();
+    log.debug("Will call the getRecommendations API on URL: ***REMOVED******REMOVED***", url);
 
-      log.debug(
-          "Found ***REMOVED******REMOVED*** recommendations for a product with id: ***REMOVED******REMOVED***", recommendations != null ? recommendations.size() : 0, productId);
-      return recommendations;
-
-***REMOVED*** catch (Exception ex) ***REMOVED***
-      log.warn(
-          "Got an exception while requesting recommendations, return zero recommendations: ***REMOVED******REMOVED***",
-          ex.getMessage());
-      return new ArrayList<>();
-***REMOVED***
+    /* Return an empty result if something goes wrong to make it possible
+       for the composite service to return partial responses
+    */
+    return webClient
+            .get()
+            .uri(url)
+            .retrieve()
+            .bodyToFlux(Recommendation.class)
+            .log()
+            .onErrorResume(error -> empty());
 ***REMOVED***
 
   @Override
   public void deleteRecommendations(int productId) ***REMOVED***
-    try ***REMOVED***
-      String url = recommendationServiceUrl
-              .concat(PRODUCT_ID_QUERY_PARAM)
-              .concat(valueOf(productId));
-      log.debug("Will call the deleteRecommendations API on URL: ***REMOVED******REMOVED***", url);
-
-      restTemplate.delete(url);
-
-***REMOVED*** catch (HttpClientErrorException ex) ***REMOVED***
-      throw handleHttpClientException(ex);
-***REMOVED***
+    messageSources
+            .outputRecommendations()
+            .send(withPayload(new Event<>(DELETE, productId, null)).build());
 ***REMOVED***
 
   @Override
   public Review createReview(Review body) ***REMOVED***
-
-    try ***REMOVED***
-      String url = reviewServiceUrl;
-      log.debug("Will post a new review to URL: ***REMOVED******REMOVED***", url);
-
-      var review = restTemplate.postForObject(url, body, Review.class);
-      log.debug("Created a review with id: ***REMOVED******REMOVED***", review != null ? review.getProductId() : 0);
-
-      return review;
-
-***REMOVED*** catch (HttpClientErrorException ex) ***REMOVED***
-      throw handleHttpClientException(ex);
-***REMOVED***
+    messageSources
+            .outputReviews()
+            .send(withPayload(new Event<>(CREATE, body.getProductId(), body)).build());
+    return body;
 ***REMOVED***
 
   @Override
-  public List<Review> getReviews(int productId) ***REMOVED***
+  public Flux<Review> getReviews(int productId) ***REMOVED***
 
-    try ***REMOVED***
-      String url = reviewServiceUrl
-              .concat(PRODUCT_ID_QUERY_PARAM)
-              .concat(valueOf(productId));
+    var url = reviewServiceUrl
+            .concat("/reviews")
+            .concat(PRODUCT_ID_QUERY_PARAM)
+            .concat(valueOf(productId));
 
-      log.debug("Will call the getReviews API on URL: ***REMOVED******REMOVED***", url);
-      List<Review> reviews =
-          restTemplate
-              .exchange(url, GET, null, new ParameterizedTypeReference<List<Review>>() ***REMOVED******REMOVED***)
-              .getBody();
+    log.debug("Will call the getReviews API on URL: ***REMOVED******REMOVED***", url);
 
-      log.debug("Found ***REMOVED******REMOVED*** reviews for a product with id: ***REMOVED******REMOVED***", reviews != null ? reviews.size() : 0, productId);
-      return reviews;
+    /* Return an empty result if something goes wrong to make it possible
+       for the composite service to return partial responses
+    */
+    return webClient
+            .get()
+            .uri(url)
+            .retrieve()
+            .bodyToFlux(Review.class).log()
+            .onErrorResume(error -> empty());
 
-***REMOVED*** catch (Exception ex) ***REMOVED***
-      log.warn(
-          "Got an exception while requesting reviews, return zero reviews: ***REMOVED******REMOVED***", ex.getMessage());
-      return new ArrayList<>();
-***REMOVED***
 ***REMOVED***
 
   @Override
   public void deleteReviews(int productId) ***REMOVED***
-    try ***REMOVED***
-      String url = reviewServiceUrl
-              .concat(PRODUCT_ID_QUERY_PARAM)
-              .concat(valueOf(productId));
-      log.debug("Will call the deleteReviews API on URL: ***REMOVED******REMOVED***", url);
-
-      restTemplate.delete(url);
-
-***REMOVED*** catch (HttpClientErrorException ex) ***REMOVED***
-      throw handleHttpClientException(ex);
-***REMOVED***
+    messageSources
+            .outputReviews()
+            .send(withPayload(new Event<>(DELETE, productId, null)).build());
 ***REMOVED***
 
-  private RuntimeException handleHttpClientException(HttpClientErrorException ex) ***REMOVED***
-    return switch (ex.getStatusCode()) ***REMOVED***
-      case NOT_FOUND -> new NotFoundException(getErrorMessage(ex));
-      case UNPROCESSABLE_ENTITY -> new InvalidInputException(getErrorMessage(ex));
+  public Mono<Health> getProductHealth() ***REMOVED***
+    return getHealth(productServiceUrl);
+***REMOVED***
+
+  public Mono<Health> getRecommendationHealth() ***REMOVED***
+    return getHealth(recommendationServiceUrl);
+***REMOVED***
+
+  public Mono<Health> getReviewHealth() ***REMOVED***
+    return getHealth(reviewServiceUrl);
+***REMOVED***
+
+  private Mono<Health> getHealth(String url) ***REMOVED***
+    url += "/actuator/health";
+    log.debug("Will call the Health API on URL: ***REMOVED******REMOVED***", url);
+    return webClient.get().uri(url).retrieve().bodyToMono(String.class)
+            .map(s -> new Health.Builder().up().build())
+            .onErrorResume(ex -> Mono.just(new Health.Builder().down(ex).build()))
+            .log();
+***REMOVED***
+
+  private Throwable handleException(Throwable ex) ***REMOVED***
+    if (!(ex instanceof WebClientResponseException wcre)) ***REMOVED***
+      log.warn("Got a unexpected error: ***REMOVED******REMOVED***, will rethrow it", ex.toString());
+      return ex;
+***REMOVED***
+
+    return switch (wcre.getStatusCode()) ***REMOVED***
+      case NOT_FOUND -> new NotFoundException(getErrorMessage(wcre));
+      case UNPROCESSABLE_ENTITY -> new InvalidInputException(getErrorMessage(wcre));
       default -> ***REMOVED***
-        log.warn("Got a unexpected HTTP error: ***REMOVED******REMOVED***, will rethrow it", ex.getStatusCode());
-        log.warn("Error body: ***REMOVED******REMOVED***", ex.getResponseBodyAsString());
-      throw ex;***REMOVED***
+        log.warn("Got a unexpected HTTP error: ***REMOVED******REMOVED***, will rethrow it", wcre.getStatusCode());
+        log.warn("Error body: ***REMOVED******REMOVED***", wcre.getResponseBodyAsString());
+      throw wcre;***REMOVED***
 ***REMOVED***;
 ***REMOVED***
 
-  private String getErrorMessage(HttpClientErrorException ex) ***REMOVED***
+  private String getErrorMessage(WebClientResponseException ex) ***REMOVED***
     try ***REMOVED***
       return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).message();
 ***REMOVED*** catch (IOException ioException) ***REMOVED***
       return ex.getMessage();
 ***REMOVED***
+***REMOVED***
+
+  public interface MessageSources ***REMOVED***
+
+    String OUTPUT_PRODUCTS = "output-products";
+    String OUTPUT_RECOMMENDATIONS = "output-recommendations";
+    String OUTPUT_REVIEWS = "output-reviews";
+
+    @Output(OUTPUT_PRODUCTS)
+    MessageChannel outputProducts();
+
+    @Output(OUTPUT_RECOMMENDATIONS)
+    MessageChannel outputRecommendations();
+
+    @Output(OUTPUT_REVIEWS)
+    MessageChannel outputReviews();
 ***REMOVED***
 ***REMOVED***

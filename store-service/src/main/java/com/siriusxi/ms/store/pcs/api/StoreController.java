@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @Log4j2
@@ -22,9 +23,10 @@ public class StoreController implements StoreEndpoint ***REMOVED***
     this.storeService = storeService;
 ***REMOVED***
 
-  /** ***REMOVED***@inheritDoc***REMOVED*** */
+  /** ***REMOVED***@inheritDoc***REMOVED***
+   * @return*/
   @Override
-  public ProductAggregate getProduct(int id) ***REMOVED***
+  public Mono<ProductAggregate> getProduct(int id) ***REMOVED***
     return storeService.getProduct(id);
 ***REMOVED***
 
