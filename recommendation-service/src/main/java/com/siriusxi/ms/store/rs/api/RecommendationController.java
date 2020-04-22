@@ -7,8 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 /**
  * Class <code>RecommendationController</code> is the implementation of the main Recommendation
@@ -16,12 +15,13 @@ import java.util.List;
  *
  * @see RecommendationEndpoint
  * @author mohamed.taman
- * @version v1.0
+ * @version v4.0
  * @since v3.0 codename Storm
  */
 @RestController
 @Log4j2
 public class RecommendationController implements RecommendationEndpoint ***REMOVED***
+
   /** Recommendation service business logic interface. */
   private final RecommendationService recommendationService;
 
@@ -33,19 +33,7 @@ public class RecommendationController implements RecommendationEndpoint ***REMOV
 
   /** ***REMOVED***@inheritDoc***REMOVED*** */
   @Override
-  public List<Recommendation> getRecommendations(int productId) ***REMOVED***
+  public Flux<Recommendation> getRecommendations(int productId) ***REMOVED***
     return recommendationService.getRecommendations(productId);
-***REMOVED***
-
-  /** ***REMOVED***@inheritDoc***REMOVED*** */
-  @Override
-  public Recommendation createRecommendation(Recommendation body) ***REMOVED***
-    return recommendationService.createRecommendation(body);
-***REMOVED***
-
-  /** ***REMOVED***@inheritDoc***REMOVED*** */
-  @Override
-  public void deleteRecommendations(int productId) ***REMOVED***
-    recommendationService.deleteRecommendations(productId);
 ***REMOVED***
 ***REMOVED***

@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataMongoTest
-public class PersistenceTests ***REMOVED***
+class PersistenceTests ***REMOVED***
 
   @Autowired private RecommendationRepository repository;
 
@@ -25,11 +25,12 @@ public class PersistenceTests ***REMOVED***
 
   @BeforeEach
   public void setupDb() ***REMOVED***
-    repository.deleteAll();
+    repository.deleteAll().block();
 
     RecommendationEntity entity = new RecommendationEntity(1, 2, "a", 3, "c");
-    savedEntity = repository.save(entity);
+    savedEntity = repository.save(entity).block();
 
+    assert savedEntity != null;
     assertEqualsRecommendation(entity, savedEntity);
 ***REMOVED***
 
@@ -37,33 +38,39 @@ public class PersistenceTests ***REMOVED***
   public void create() ***REMOVED***
 
     var newEntity = new RecommendationEntity(1, 3, "a", 3, "c");
-    repository.save(newEntity);
+    repository.save(newEntity).block();
 
-    var foundEntity = repository.findById(newEntity.getId()).orElse(new RecommendationEntity());
+    var foundEntity = repository.findById(newEntity.getId()).block();
+
+    assert foundEntity != null;
     assertEqualsRecommendation(newEntity, foundEntity);
 
-    assertEquals(2, repository.count());
+    assertEquals(2L, repository.count().block());
 ***REMOVED***
 
   @Test
   public void update() ***REMOVED***
     savedEntity.setAuthor("a2");
-    repository.save(savedEntity);
+    repository.save(savedEntity).block();
 
-    RecommendationEntity foundEntity = repository.findById(savedEntity.getId()).get();
-    assertEquals(1, (long) foundEntity.getVersion());
+    RecommendationEntity foundEntity = repository.findById(savedEntity.getId()).block();
+
+    assert foundEntity != null;
+
+    assertEquals(1, foundEntity.getVersion());
     assertEquals("a2", foundEntity.getAuthor());
 ***REMOVED***
 
   @Test
   public void delete() ***REMOVED***
-    repository.delete(savedEntity);
-    assertFalse(repository.existsById(savedEntity.getId()));
+    repository.delete(savedEntity).block();
+    assertEquals(false, repository.existsById(savedEntity.getId()).block());
 ***REMOVED***
 
   @Test
   public void getByProductId() ***REMOVED***
-    List<RecommendationEntity> entityList = repository.findByProductId(savedEntity.getProductId());
+    List<RecommendationEntity> entityList =
+            repository.findByProductId(savedEntity.getProductId()).collectList().block();
 
     assertThat(entityList, hasSize(1));
     assertEqualsRecommendation(savedEntity, entityList.get(0));
@@ -74,20 +81,23 @@ public class PersistenceTests ***REMOVED***
 
     Assertions.assertThrows(
         DuplicateKeyException.class,
-        () -> repository.save(new RecommendationEntity(1, 2, "a", 3, "c")));
+        () -> repository
+                .save(new RecommendationEntity(1, 2, "a", 3, "c"))
+                .block());
 ***REMOVED***
 
   @Test
   public void optimisticLockError() ***REMOVED***
 
     // Store the saved entity in two separate entity objects
-    RecommendationEntity
-        entity1 = repository.findById(savedEntity.getId()).orElse(new RecommendationEntity()),
-        entity2 = repository.findById(savedEntity.getId()).orElse(new RecommendationEntity());
+    RecommendationEntity entity1 = repository.findById(savedEntity.getId()).block(),
+                         entity2 = repository.findById(savedEntity.getId()).block();
 
     // Update the entity using the first entity object
+    assert entity1 != null;
+
     entity1.setAuthor("a1");
-    repository.save(entity1);
+    repository.save(entity1).block();
 
     /*
       Update the entity using the second entity object.
@@ -95,17 +105,21 @@ public class PersistenceTests ***REMOVED***
       i.e. a Optimistic Lock Error.
     */
     try ***REMOVED***
+      assert entity2 != null;
+
       entity2.setAuthor("a2");
-      repository.save(entity2);
+      repository.save(entity2).block();
 
       fail("Expected an OptimisticLockingFailureException");
 ***REMOVED*** catch (OptimisticLockingFailureException ignored) ***REMOVED***
 ***REMOVED***
 
     // Get the updated entity from the database and verify its new sate
-    var updatedEntity = repository.findById(savedEntity.getId()).orElse(new RecommendationEntity());
+    var updatedEntity = repository.findById(savedEntity.getId()).block();
 
-    assertEquals(1, (int) updatedEntity.getVersion());
+    assert updatedEntity != null;
+
+    assertEquals(1, updatedEntity.getVersion());
     assertEquals("a1", updatedEntity.getAuthor());
 ***REMOVED***
 
