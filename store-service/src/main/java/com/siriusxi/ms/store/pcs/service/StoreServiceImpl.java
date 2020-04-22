@@ -9,11 +9,11 @@ import com.siriusxi.ms.store.api.core.product.dto.Product;
 import com.siriusxi.ms.store.api.core.recommendation.dto.Recommendation;
 import com.siriusxi.ms.store.api.core.review.dto.Review;
 import com.siriusxi.ms.store.pcs.integration.StoreIntegration;
-import com.siriusxi.ms.store.util.exceptions.NotFoundException;
 import com.siriusxi.ms.store.util.http.ServiceUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,16 +37,17 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
     try ***REMOVED***
 
       log.debug(
-          "createCompositeProduct: creates a new composite entity for id: ***REMOVED******REMOVED***", body.getProductId());
+          "createCompositeProduct: creates a new composite entity for productId: ***REMOVED******REMOVED***",
+          body.getProductId());
 
-      Product product = new Product(body.getProductId(), body.getName(), body.getWeight(), null);
+      var product = new Product(body.getProductId(), body.getName(), body.getWeight(), null);
       integration.createProduct(product);
 
       if (body.getRecommendations() != null) ***REMOVED***
         body.getRecommendations()
             .forEach(
                 r -> ***REMOVED***
-                  Recommendation recommendation =
+                  var recommendation =
                       new Recommendation(
                           body.getProductId(),
                           r.getRecommendationId(),
@@ -73,45 +74,49 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
                   integration.createReview(review);
             ***REMOVED***);
   ***REMOVED***
-
       log.debug(
-          "createCompositeProduct: composite entites created for id: ***REMOVED******REMOVED***", body.getProductId());
+          "createCompositeProduct: composite entities created for productId: ***REMOVED******REMOVED***",
+          body.getProductId());
 
 ***REMOVED*** catch (RuntimeException re) ***REMOVED***
-      log.warn("createCompositeProduct failed", re);
+      log.warn("createCompositeProduct failed: ***REMOVED******REMOVED***", re.toString());
       throw re;
 ***REMOVED***
 ***REMOVED***
 
   @Override
-  public ProductAggregate getProduct(int id) ***REMOVED***
-    log.debug("getCompositeProduct: lookup a product aggregate for id: ***REMOVED******REMOVED***", id);
-
-    Product product = integration.getProduct(id);
-    if (product == null) throw new NotFoundException("No product found for id: " + id);
-
-    List<Recommendation> recommendations = integration.getRecommendations(id);
-
-    List<Review> reviews = integration.getReviews(id);
-
-    log.debug("getCompositeProduct: aggregate entity found for id: ***REMOVED******REMOVED***", id);
-
-    return createProductAggregate(
-        product, recommendations, reviews, serviceUtil.getServiceAddress());
+  public Mono<ProductAggregate> getProduct(int productId) ***REMOVED***
+    return Mono.zip(
+            values ->
+                createProductAggregate(
+                    (Product) values[0],
+                    (List<Recommendation>) values[1],
+                    (List<Review>) values[2],
+                    serviceUtil.getServiceAddress()),
+            integration.getProduct(productId),
+            integration.getRecommendations(productId).collectList(),
+            integration.getReviews(productId).collectList())
+        .doOnError(ex -> log.warn("getCompositeProduct failed: ***REMOVED******REMOVED***", ex.toString()))
+        .log();
 ***REMOVED***
 
   @Override
-  public void deleteProduct(int id) ***REMOVED***
+  public void deleteProduct(int productId) ***REMOVED***
 
-    log.debug("deleteCompositeProduct: Deletes a product aggregate for id: ***REMOVED******REMOVED***", id);
+    try ***REMOVED***
 
-    integration.deleteProduct(id);
+      log.debug("deleteCompositeProduct: Deletes a product aggregate for productId: ***REMOVED******REMOVED***", productId);
 
-    integration.deleteRecommendations(id);
+      integration.deleteProduct(productId);
+      integration.deleteRecommendations(productId);
+      integration.deleteReviews(productId);
 
-    integration.deleteReviews(id);
+      log.debug("deleteCompositeProduct: aggregate entities deleted for productId: ***REMOVED******REMOVED***", productId);
 
-    log.debug("getCompositeProduct: aggregate entities deleted for id: ***REMOVED******REMOVED***", id);
+***REMOVED*** catch (RuntimeException re) ***REMOVED***
+      log.warn("deleteCompositeProduct failed: ***REMOVED******REMOVED***", re.toString());
+      throw re;
+***REMOVED***
 ***REMOVED***
 
   private ProductAggregate createProductAggregate(
@@ -121,7 +126,7 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
       String serviceAddress) ***REMOVED***
 
     // 1. Setup product info
-    int id = product.getProductId();
+    int productId = product.getProductId();
     String name = product.getName();
     int weight = product.getWeight();
 
@@ -150,15 +155,15 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
     // 4. Create info regarding the involved microservices addresses
     String productAddress = product.getServiceAddress();
     String reviewAddress =
-        (reviews != null && !reviews.isEmpty()) ? reviews.get(0).getServiceAddress() : "";
+        (reviews != null && reviews.size() > 0) ? reviews.get(0).getServiceAddress() : "";
     String recommendationAddress =
-        (recommendations != null && !recommendations.isEmpty())
+        (recommendations != null && recommendations.size() > 0)
             ? recommendations.get(0).getServiceAddress()
             : "";
     ServiceAddresses serviceAddresses =
         new ServiceAddresses(serviceAddress, productAddress, reviewAddress, recommendationAddress);
 
     return new ProductAggregate(
-        id, name, weight, recommendationSummaries, reviewSummaries, serviceAddresses);
+        productId, name, weight, recommendationSummaries, reviewSummaries, serviceAddresses);
 ***REMOVED***
 ***REMOVED***

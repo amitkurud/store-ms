@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 /**
  * Class <code>ProductController</code> is the implementation of the main Product Endpoint API
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @see ProductEndpoint
  * @author mohamed.taman
- * @version v1.0
+ * @version v4.0
  * @since v3.0 codename Storm
  */
 @RestController
@@ -31,19 +32,7 @@ public class ProductController implements ProductEndpoint ***REMOVED***
 
   /** ***REMOVED***@inheritDoc***REMOVED*** */
   @Override
-  public Product getProduct(int id) ***REMOVED***
+  public Mono<Product> getProduct(int id) ***REMOVED***
     return prodService.getProduct(id);
-***REMOVED***
-
-  /** ***REMOVED***@inheritDoc***REMOVED*** */
-  @Override
-  public Product createProduct(Product body) ***REMOVED***
-    return prodService.createProduct(body);
-***REMOVED***
-
-  /** ***REMOVED***@inheritDoc***REMOVED*** */
-  @Override
-  public void deleteProduct(int id) ***REMOVED***
-    prodService.deleteProduct(id);
 ***REMOVED***
 ***REMOVED***

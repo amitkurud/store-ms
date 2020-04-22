@@ -2,7 +2,6 @@ package com.siriusxi.ms.store.rs.service;
 
 import com.siriusxi.ms.store.api.core.recommendation.RecommendationService;
 import com.siriusxi.ms.store.api.core.recommendation.dto.Recommendation;
-import com.siriusxi.ms.store.rs.persistence.RecommendationEntity;
 import com.siriusxi.ms.store.rs.persistence.RecommendationRepository;
 import com.siriusxi.ms.store.util.exceptions.InvalidInputException;
 import com.siriusxi.ms.store.util.http.ServiceUtil;
@@ -10,8 +9,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 @Service("RecommendationServiceImpl")
 @Log4j2
@@ -33,46 +31,55 @@ public class RecommendationServiceImpl implements RecommendationService ***REMOV
 
   @Override
   public Recommendation createRecommendation(Recommendation body) ***REMOVED***
-    try ***REMOVED***
-      RecommendationEntity entity = mapper.apiToEntity(body);
-      RecommendationEntity newEntity = repository.save(entity);
 
-      log.debug(
-          "createRecommendation: created a recommendation entity: ***REMOVED******REMOVED***/***REMOVED******REMOVED***",
-          body.getProductId(),
-          body.getRecommendationId());
+    isValidProductId(body.getProductId());
 
-      return mapper.entityToApi(newEntity);
-
-***REMOVED*** catch (DuplicateKeyException dke) ***REMOVED***
-      throw new InvalidInputException(
-          "Duplicate key, Product Id: "
-              + body.getProductId()
-              + ", Recommendation Id:"
-              + body.getRecommendationId());
-***REMOVED***
+    return repository
+            .save(mapper.apiToEntity(body))
+            .log()
+            .onErrorMap(
+                    DuplicateKeyException.class,
+                    ex -> new InvalidInputException("Duplicate key, Product Id: "
+                            + body.getProductId() + ", Recommendation Id:"
+                            + body.getRecommendationId()))
+            .map(mapper::entityToApi).block();
 ***REMOVED***
 
   @Override
-  public List<Recommendation> getRecommendations(int productId) ***REMOVED***
+  public Flux<Recommendation> getRecommendations(int productId) ***REMOVED***
 
-    if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
+    isValidProductId(productId);
 
-    List<RecommendationEntity> entityList = repository.findByProductId(productId);
-    List<Recommendation> list = mapper.entityListToApiList(entityList);
-    list.forEach(e -> e.setServiceAddress(serviceUtil.getServiceAddress()));
+    return repository
+            .findByProductId(productId)
+            .log()
+            .map(mapper::entityToApi)
+            .map(e -> ***REMOVED***
+              e.setServiceAddress(serviceUtil.getServiceAddress());
+              return e;
+        ***REMOVED***);
 
-    log.debug("getRecommendations: response size: ***REMOVED******REMOVED***", list.size());
-
-    return list;
+      //FIXME check how to add log to flux
+    //log.debug("getRecommendations: response size: ***REMOVED******REMOVED***", list.size());
 ***REMOVED***
 
   @Override
   public void deleteRecommendations(int productId) ***REMOVED***
+    isValidProductId(productId);
+
     log.debug(
-        "deleteRecommendations: tries to delete recommendations for the product with "
-            + "productId: ***REMOVED******REMOVED***",
+        """ 
+           deleteRecommendations: tries to delete recommendations 
+           for the product with productId: ***REMOVED******REMOVED***
+           """,
         productId);
-    repository.deleteAll(repository.findByProductId(productId));
+
+    repository
+            .deleteAll(repository.findByProductId(productId))
+            .block();
+***REMOVED***
+
+  private void isValidProductId(int productId) ***REMOVED***
+    if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
 ***REMOVED***
 ***REMOVED***

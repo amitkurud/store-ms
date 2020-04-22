@@ -1,6 +1,11 @@
 package com.siriusxi.ms.store.pcs.config;
 
+import com.siriusxi.ms.store.pcs.integration.StoreIntegration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.health.CompositeReactiveHealthContributor;
+import org.springframework.boot.actuate.health.ReactiveHealthContributor;
+import org.springframework.boot.actuate.health.ReactiveHealthIndicator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -9,39 +14,65 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spring.web.plugins.Docket;
 
+import java.util.Map;
+
 import static java.util.Collections.emptyList;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static springfox.documentation.builders.RequestHandlerSelectors.basePackage;
 import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
 
 @Configuration
-public class StoreConfiguration ***REMOVED***
+public class StoreServiceConfiguration ***REMOVED***
+
+  private final StoreIntegration integration;
+
   @Value("$***REMOVED***api.common.version***REMOVED***")
-  String apiVersion;
+  private String apiVersion;
 
   @Value("$***REMOVED***api.common.title***REMOVED***")
-  String apiTitle;
+  private String apiTitle;
 
   @Value("$***REMOVED***api.common.description***REMOVED***")
-  String apiDescription;
+  private String apiDescription;
 
   @Value("$***REMOVED***api.common.termsOfServiceUrl***REMOVED***")
-  String apiTermsOfServiceUrl;
+  private String apiTermsOfServiceUrl;
 
   @Value("$***REMOVED***api.common.license***REMOVED***")
-  String apiLicense;
+  private String apiLicense;
 
   @Value("$***REMOVED***api.common.licenseUrl***REMOVED***")
-  String apiLicenseUrl;
+  private String apiLicenseUrl;
 
   @Value("$***REMOVED***api.common.contact.name***REMOVED***")
-  String apiContactName;
+  private String apiContactName;
 
   @Value("$***REMOVED***api.common.contact.url***REMOVED***")
-  String apiContactUrl;
+  private String apiContactUrl;
 
   @Value("$***REMOVED***api.common.contact.email***REMOVED***")
-  String apiContactEmail;
+  private String apiContactEmail;
+
+  @Autowired
+  public StoreServiceConfiguration(StoreIntegration integration) ***REMOVED***
+    this.integration = integration;
+***REMOVED***
+
+  @Bean(name = "Core System Microservices")
+  ReactiveHealthContributor coreServices() ***REMOVED***
+
+    ReactiveHealthIndicator productHealthIndicator = integration::getProductHealth;
+    ReactiveHealthIndicator recommendationHealthIndicator = integration::getRecommendationHealth;
+    ReactiveHealthIndicator reviewHealthIndicator = integration::getReviewHealth;
+
+    Map<String, ReactiveHealthContributor> allIndicators =
+        Map.of(
+            "Product Service", productHealthIndicator,
+            "Recommendation Service", recommendationHealthIndicator,
+            "Review Service", reviewHealthIndicator);
+
+    return CompositeReactiveHealthContributor.fromMap(allIndicators);
+***REMOVED***
 
   @Bean
   RestTemplate newRestClient() ***REMOVED***
@@ -66,13 +97,17 @@ public class StoreConfiguration ***REMOVED***
         .paths(PathSelectors.any())
         .build()
         /*
-           Using the globalResponseMessage() method, we ask SpringFox not to add any default HTTP response codes to the API documentation, such as 401 and 403, which we don't currently use.
+            Using the globalResponseMessage() method, we ask SpringFox not to add any default HTTP
+            response codes to the API documentation, such as 401 and 403,
+            which we don't currently use.
         */
         .globalResponseMessage(POST, emptyList())
         .globalResponseMessage(GET, emptyList())
         .globalResponseMessage(DELETE, emptyList())
         /*
-           The api* variables that are used to configure the Docket bean with general information about the API are initialized from the property file using Spring @Value annotations.
+            The api* variables that are used to configure the Docket bean with general
+            information about the API are initialized from the property file using
+            Spring @Value annotations.
         */
         .apiInfo(
             new ApiInfo(
