@@ -24,7 +24,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
-    properties = ***REMOVED***"spring.data.mongodb.port: 0"***REMOVED***)
+    properties = ***REMOVED***
+            "spring.data.mongodb.port: 0",
+            "eureka.client.enabled: false"***REMOVED***)
 class ProductServiceApplicationTests ***REMOVED***
 
   private final String BASE_URI = "/products/";

@@ -32,7 +32,9 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.receivesPayloadThat;
 import static org.springframework.http.HttpStatus.OK;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(
+        webEnvironment = RANDOM_PORT,
+        properties = ***REMOVED***"eureka.client.enabled: false"***REMOVED***)
 class MessagingTests ***REMOVED***
 
   public static final String BASE_URL = "/store/api/v1/products/";

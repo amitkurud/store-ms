@@ -38,43 +38,33 @@ import static reactor.core.publisher.Flux.empty;
 @Log4j2
 public class StoreIntegration implements ProductService, RecommendationService, ReviewService ***REMOVED***
 
-  public static final String PRODUCT_ID_QUERY_PARAM = "?productId=";
-  private final WebClient webClient;
+  private final String PRODUCT_ID_QUERY_PARAM = "?productId=";
+  private final WebClient.Builder webClientBuilder;
+  private WebClient webClient;
   private final ObjectMapper mapper;
   private final MessageSources messageSources;
   private final String productServiceUrl;
   private final String recommendationServiceUrl;
   private final String reviewServiceUrl;
+
   @Autowired
   public StoreIntegration(
-          WebClient.Builder webClient,
-      ObjectMapper mapper,
+          WebClient.Builder webClientBuilder,
+          ObjectMapper mapper,
           MessageSources messageSources,
-      @Value("$***REMOVED***app.product-service.host***REMOVED***") String productServiceHost,
-      @Value("$***REMOVED***app.product-service.port***REMOVED***") int productServicePort,
-      @Value("$***REMOVED***app.recommendation-service.host***REMOVED***") String recommendationServiceHost,
-      @Value("$***REMOVED***app.recommendation-service.port***REMOVED***") int recommendationServicePort,
-      @Value("$***REMOVED***app.review-service.host***REMOVED***") String reviewServiceHost,
-      @Value("$***REMOVED***app.review-service.port***REMOVED***") int reviewServicePort) ***REMOVED***
+          @Value("$***REMOVED***app.product-service.host***REMOVED***") String productServiceHost,
+          @Value("$***REMOVED***app.recommendation-service.host***REMOVED***") String recommendationServiceHost,
+          @Value("$***REMOVED***app.review-service.host***REMOVED***") String reviewServiceHost) ***REMOVED***
 
-    this.webClient = webClient.build();
+    this.webClientBuilder = webClientBuilder;
     this.mapper = mapper;
     this.messageSources = messageSources;
 
     var http = "http://";
 
-    productServiceUrl =
-        http.concat(productServiceHost)
-            .concat(":")
-            .concat(valueOf(productServicePort));
-    recommendationServiceUrl =
-        http.concat(recommendationServiceHost)
-            .concat(":")
-            .concat(valueOf(recommendationServicePort));
-    reviewServiceUrl =
-        http.concat(reviewServiceHost)
-            .concat(":")
-            .concat(valueOf(reviewServicePort));
+    productServiceUrl = http.concat(productServiceHost);
+    recommendationServiceUrl = http.concat(recommendationServiceHost);
+    reviewServiceUrl = http.concat(reviewServiceHost);
 ***REMOVED***
 
   @Override
@@ -95,7 +85,7 @@ public class StoreIntegration implements ProductService, RecommendationService, 
 
     log.debug("Will call the getProduct API on URL: ***REMOVED******REMOVED***", url);
 
-    return webClient
+    return getWebClient()
             .get()
             .uri(url)
             .retrieve()
@@ -136,7 +126,7 @@ public class StoreIntegration implements ProductService, RecommendationService, 
     /* Return an empty result if something goes wrong to make it possible
        for the composite service to return partial responses
     */
-    return webClient
+    return getWebClient()
             .get()
             .uri(url)
             .retrieve()
@@ -173,7 +163,7 @@ public class StoreIntegration implements ProductService, RecommendationService, 
     /* Return an empty result if something goes wrong to make it possible
        for the composite service to return partial responses
     */
-    return webClient
+    return getWebClient()
             .get()
             .uri(url)
             .retrieve()
@@ -201,10 +191,17 @@ public class StoreIntegration implements ProductService, RecommendationService, 
     return getHealth(reviewServiceUrl);
 ***REMOVED***
 
+  private WebClient getWebClient() ***REMOVED***
+    if (webClient == null) ***REMOVED***
+      webClient = webClientBuilder.build();
+***REMOVED***
+    return webClient;
+***REMOVED***
+
   private Mono<Health> getHealth(String url) ***REMOVED***
     url += "/actuator/health";
     log.debug("Will call the Health API on URL: ***REMOVED******REMOVED***", url);
-    return webClient.get().uri(url).retrieve().bodyToMono(String.class)
+    return getWebClient().get().uri(url).retrieve().bodyToMono(String.class)
             .map(s -> new Health.Builder().up().build())
             .onErrorResume(ex -> Mono.just(new Health.Builder().down(ex).build()))
             .log();

@@ -23,7 +23,9 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(
+        webEnvironment = RANDOM_PORT,
+        properties = ***REMOVED***"eureka.client.enabled: false"***REMOVED***)
 class StoreServiceApplicationTests ***REMOVED***
 
   public static final String BASE_URL = "/store/api/v1/products/";
