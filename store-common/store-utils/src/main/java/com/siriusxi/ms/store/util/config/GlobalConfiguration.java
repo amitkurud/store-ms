@@ -25,8 +25,8 @@ public class GlobalConfiguration ***REMOVED***
   public Jackson2ObjectMapperBuilderCustomizer jacksonCustomizer() ***REMOVED***
     return builder ->
         builder
-            .visibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-            // human readable
-            .indentOutput(true);
+            .visibility(
+                    PropertyAccessor.FIELD,
+                    JsonAutoDetect.Visibility.ANY);
 ***REMOVED***
 ***REMOVED***
