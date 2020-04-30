@@ -1,19 +1,14 @@
 package com.siriusxi.ms.store.pcs.config;
 
-import com.siriusxi.ms.store.pcs.integration.StoreIntegration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.health.CompositeReactiveHealthContributor;
-import org.springframework.boot.actuate.health.ReactiveHealthContributor;
-import org.springframework.boot.actuate.health.ReactiveHealthIndicator;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spring.web.plugins.Docket;
-
-import java.util.Map;
 
 import static java.util.Collections.emptyList;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -22,8 +17,6 @@ import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
 
 @Configuration
 public class StoreServiceConfiguration ***REMOVED***
-
-  private final StoreIntegration integration;
 
   @Value("$***REMOVED***api.common.version***REMOVED***")
   private String apiVersion;
@@ -51,27 +44,6 @@ public class StoreServiceConfiguration ***REMOVED***
 
   @Value("$***REMOVED***api.common.contact.email***REMOVED***")
   private String apiContactEmail;
-
-  @Autowired
-  public StoreServiceConfiguration(StoreIntegration integration) ***REMOVED***
-    this.integration = integration;
-***REMOVED***
-
-  @Bean(name = "Core System Microservices")
-  ReactiveHealthContributor coreServices() ***REMOVED***
-
-    ReactiveHealthIndicator productHealthIndicator = integration::getProductHealth;
-    ReactiveHealthIndicator recommendationHealthIndicator = integration::getRecommendationHealth;
-    ReactiveHealthIndicator reviewHealthIndicator = integration::getReviewHealth;
-
-    Map<String, ReactiveHealthContributor> allIndicators =
-        Map.of(
-            "Product Service", productHealthIndicator,
-            "Recommendation Service", recommendationHealthIndicator,
-            "Review Service", reviewHealthIndicator);
-
-    return CompositeReactiveHealthContributor.fromMap(allIndicators);
-***REMOVED***
 
   /**
    * Will exposed on $HOST:$PORT/swagger-ui.html
@@ -113,5 +85,11 @@ public class StoreServiceConfiguration ***REMOVED***
                 apiLicense,
                 apiLicenseUrl,
                 emptyList()));
+***REMOVED***
+
+  @Bean
+  @LoadBalanced
+  public WebClient.Builder loadBalancedWebClientBuilder() ***REMOVED***
+    return WebClient.builder();
 ***REMOVED***
 ***REMOVED***

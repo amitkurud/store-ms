@@ -38,45 +38,45 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
 
       log.debug(
           "createCompositeProduct: creates a new composite entity for productId: ***REMOVED******REMOVED***",
-          body.getProductId());
+          body.productId());
 
-      var product = new Product(body.getProductId(), body.getName(), body.getWeight(), null);
+      var product = new Product(body.productId(), body.name(), body.weight(), null);
       integration.createProduct(product);
 
-      if (body.getRecommendations() != null) ***REMOVED***
-        body.getRecommendations()
+      if (body.recommendations() != null) ***REMOVED***
+        body.recommendations()
             .forEach(
                 r -> ***REMOVED***
                   var recommendation =
                       new Recommendation(
-                          body.getProductId(),
-                          r.getRecommendationId(),
-                          r.getAuthor(),
-                          r.getRate(),
-                          r.getContent(),
+                          body.productId(),
+                          r.recommendationId(),
+                          r.author(),
+                          r.rate(),
+                          r.content(),
                           null);
                   integration.createRecommendation(recommendation);
             ***REMOVED***);
   ***REMOVED***
 
-      if (body.getReviews() != null) ***REMOVED***
-        body.getReviews()
+      if (body.reviews() != null) ***REMOVED***
+        body.reviews()
             .forEach(
                 r -> ***REMOVED***
                   Review review =
                       new Review(
-                          body.getProductId(),
-                          r.getReviewId(),
-                          r.getAuthor(),
-                          r.getSubject(),
-                          r.getContent(),
+                          body.productId(),
+                          r.reviewId(),
+                          r.author(),
+                          r.subject(),
+                          r.content(),
                           null);
                   integration.createReview(review);
             ***REMOVED***);
   ***REMOVED***
       log.debug(
           "createCompositeProduct: composite entities created for productId: ***REMOVED******REMOVED***",
-          body.getProductId());
+          body.productId());
 
 ***REMOVED*** catch (RuntimeException re) ***REMOVED***
       log.warn("createCompositeProduct failed: ***REMOVED******REMOVED***", re.toString());

@@ -15,10 +15,4 @@ public class StoreServiceApplication ***REMOVED***
   public static void main(String[] args) ***REMOVED***
     SpringApplication.run(StoreServiceApplication.class, args);
 ***REMOVED***
-
-  @Bean
-  @LoadBalanced
-  public WebClient.Builder loadBalancedWebClientBuilder() ***REMOVED***
-    return WebClient.builder();
-***REMOVED***
 ***REMOVED***
