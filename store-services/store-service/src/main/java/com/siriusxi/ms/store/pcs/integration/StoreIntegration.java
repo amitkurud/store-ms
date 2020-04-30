@@ -14,7 +14,6 @@ import com.siriusxi.ms.store.util.http.HttpErrorInfo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;
@@ -38,30 +37,14 @@ import static reactor.core.publisher.Flux.empty;
 @Log4j2
 public class StoreIntegration implements ProductService, RecommendationService, ReviewService ***REMOVED***
 
-  public interface MessageSources ***REMOVED***
-
-    String OUTPUT_PRODUCTS = "output-products";
-    String OUTPUT_RECOMMENDATIONS = "output-recommendations";
-    String OUTPUT_REVIEWS = "output-reviews";
-
-    @Output(OUTPUT_PRODUCTS)
-    MessageChannel outputProducts();
-
-    @Output(OUTPUT_RECOMMENDATIONS)
-    MessageChannel outputRecommendations();
-
-    @Output(OUTPUT_REVIEWS)
-    MessageChannel outputReviews();
-***REMOVED***
-
   private final String PRODUCT_ID_QUERY_PARAM = "?productId=";
   private final WebClient.Builder webClientBuilder;
-  private WebClient webClient;
   private final ObjectMapper mapper;
   private final MessageSources messageSources;
   private final String productServiceUrl;
   private final String recommendationServiceUrl;
   private final String reviewServiceUrl;
+  private WebClient webClient;
 
   @Autowired
   public StoreIntegration(
@@ -195,32 +178,11 @@ public class StoreIntegration implements ProductService, RecommendationService, 
             .send(withPayload(new Event<>(DELETE, productId, null)).build());
 ***REMOVED***
 
-  public Mono<Health> getProductHealth() ***REMOVED***
-    return getHealth(productServiceUrl);
-***REMOVED***
-
-  public Mono<Health> getRecommendationHealth() ***REMOVED***
-    return getHealth(recommendationServiceUrl);
-***REMOVED***
-
-  public Mono<Health> getReviewHealth() ***REMOVED***
-    return getHealth(reviewServiceUrl);
-***REMOVED***
-
   private WebClient getWebClient() ***REMOVED***
     if (webClient == null) ***REMOVED***
       webClient = webClientBuilder.build();
 ***REMOVED***
     return webClient;
-***REMOVED***
-
-  private Mono<Health> getHealth(String url) ***REMOVED***
-    url += "/actuator/health";
-    log.debug("Will call the Health API on URL: ***REMOVED******REMOVED***", url);
-    return getWebClient().get().uri(url).retrieve().bodyToMono(String.class)
-            .map(s -> new Health.Builder().up().build())
-            .onErrorResume(ex -> Mono.just(new Health.Builder().down(ex).build()))
-            .log();
 ***REMOVED***
 
   private Throwable handleException(Throwable ex) ***REMOVED***
@@ -245,5 +207,21 @@ public class StoreIntegration implements ProductService, RecommendationService, 
 ***REMOVED*** catch (IOException ioException) ***REMOVED***
       return ex.getMessage();
 ***REMOVED***
+***REMOVED***
+
+  public interface MessageSources ***REMOVED***
+
+    String OUTPUT_PRODUCTS = "output-products";
+    String OUTPUT_RECOMMENDATIONS = "output-recommendations";
+    String OUTPUT_REVIEWS = "output-reviews";
+
+    @Output(OUTPUT_PRODUCTS)
+    MessageChannel outputProducts();
+
+    @Output(OUTPUT_RECOMMENDATIONS)
+    MessageChannel outputRecommendations();
+
+    @Output(OUTPUT_REVIEWS)
+    MessageChannel outputReviews();
 ***REMOVED***
 ***REMOVED***
