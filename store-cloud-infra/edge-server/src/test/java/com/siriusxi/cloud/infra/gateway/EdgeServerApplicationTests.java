@@ -9,7 +9,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
     properties = ***REMOVED***"eureka.client.enabled: false"***REMOVED***)
-// TODO add test cases https://spring.io/guides/gs/gateway/
 class EdgeServerApplicationTests ***REMOVED***
 
   @Test
