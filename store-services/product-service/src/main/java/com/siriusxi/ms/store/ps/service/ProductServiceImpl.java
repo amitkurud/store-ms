@@ -82,7 +82,7 @@ public class ProductServiceImpl implements ProductService ***REMOVED***
             .block();
 ***REMOVED***
 
-  // TODO Cloud be added to utilities class to be used by all core services implementations.
+  // TODO could be added to a utility class to be used by all core services implementations.
   private void isValidProductId(int productId) ***REMOVED***
     if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
 ***REMOVED***

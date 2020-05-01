@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
+// TODO add swagger API
 @Configuration
 @Log4j2
 public class GatewayConfiguration ***REMOVED***
@@ -26,29 +27,29 @@ public class GatewayConfiguration ***REMOVED***
     this.webClientBuilder = webClientBuilder;
 ***REMOVED***
 
-    /**
-     * This method is to check all the services health status, and Gateway service health will be
-     * only in up health state if and only if all of the core services and dependencies are up
-     * and running.
-     *
-     * @return ReactiveHealthContributor information about all the core microservices.
-     */
-    @Bean(name = "Core Microservices")
-    ReactiveHealthContributor coreServices() ***REMOVED***
+  /**
+   * This method is to check all the services health status, and Gateway service health will be only
+   * in up health state if and only if all of the core services and dependencies are up and running.
+   *
+   * @return ReactiveHealthContributor information about all the core microservices.
+   */
+  @Bean(name = "Core Microservices")
+  ReactiveHealthContributor coreServices() ***REMOVED***
 
-        ReactiveHealthIndicator productHealthIndicator = () -> getServicesHealth("http://product");
-        ReactiveHealthIndicator recommendationHealthIndicator = () -> getServicesHealth("http://recommendation");
-        ReactiveHealthIndicator reviewHealthIndicator = () -> getServicesHealth("http://review");
-        ReactiveHealthIndicator storeHealthIndicator = () -> getServicesHealth("http://store");
+    ReactiveHealthIndicator productHealthIndicator = () -> getServicesHealth("http://product");
+    ReactiveHealthIndicator recommendationHealthIndicator =
+        () -> getServicesHealth("http://recommendation");
+    ReactiveHealthIndicator reviewHealthIndicator = () -> getServicesHealth("http://review");
+    ReactiveHealthIndicator storeHealthIndicator = () -> getServicesHealth("http://store");
 
-        Map<String, ReactiveHealthContributor> allIndicators =
-                Map.of(
-                        "Product Service", productHealthIndicator,
-                        "Recommendation Service", recommendationHealthIndicator,
-                        "Review Service", reviewHealthIndicator,
-                        "Store Service",storeHealthIndicator);
+    Map<String, ReactiveHealthContributor> allIndicators =
+        Map.of(
+            "Product Service", productHealthIndicator,
+            "Recommendation Service", recommendationHealthIndicator,
+            "Review Service", reviewHealthIndicator,
+            "Store Service", storeHealthIndicator);
 
-        return CompositeReactiveHealthContributor.fromMap(allIndicators);
+    return CompositeReactiveHealthContributor.fromMap(allIndicators);
 ***REMOVED***
 
   private Mono<Health> getServicesHealth(String url) ***REMOVED***
