@@ -33,8 +33,8 @@ import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.
 import static org.springframework.http.HttpStatus.OK;
 
 @SpringBootTest(
-        webEnvironment = RANDOM_PORT,
-        properties = ***REMOVED***"eureka.client.enabled: false"***REMOVED***)
+    webEnvironment = RANDOM_PORT,
+    properties = ***REMOVED***"eureka.client.enabled: false"***REMOVED***)
 class MessagingTests ***REMOVED***
 
   public static final String BASE_URL = "/store/api/v1/products/";
@@ -67,8 +67,7 @@ class MessagingTests ***REMOVED***
         new Event<>(
             CREATE,
             composite.productId(),
-            new Product(
-                composite.productId(), composite.name(), composite.weight(), null));
+            new Product(composite.productId(), composite.name(), composite.weight(), null));
     assertThat(queueProducts, is(receivesPayloadThat(sameEventExceptCreatedAt(expectedEvent))));
 
     // Assert none recommendations and review events
@@ -97,8 +96,7 @@ class MessagingTests ***REMOVED***
         new Event<>(
             CREATE,
             composite.productId(),
-            new Product(
-                composite.productId(), composite.name(), composite.weight(), null));
+            new Product(composite.productId(), composite.name(), composite.weight(), null));
     assertThat(queueProducts, receivesPayloadThat(sameEventExceptCreatedAt(expectedProductEvent)));
 
     // Assert one create recommendation event queued up
@@ -176,13 +174,16 @@ class MessagingTests ***REMOVED***
         .uri(BASE_URL)
         .body(Mono.just(compositeProduct), ProductAggregate.class)
         .exchange()
-        .expectStatus().isEqualTo(OK);
+        .expectStatus()
+        .isEqualTo(OK);
 ***REMOVED***
 
   private void deleteAndVerifyProduct(int productId) ***REMOVED***
-    client.delete()
-            .uri(BASE_URL.concat(valueOf(productId)))
-            .exchange()
-            .expectStatus().isEqualTo(OK);
+    client
+        .delete()
+        .uri(BASE_URL.concat(valueOf(productId)))
+        .exchange()
+        .expectStatus()
+        .isEqualTo(OK);
 ***REMOVED***
 ***REMOVED***
