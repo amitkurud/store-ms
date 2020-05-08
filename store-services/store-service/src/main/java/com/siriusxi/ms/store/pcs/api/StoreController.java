@@ -13,9 +13,7 @@ import reactor.core.publisher.Mono;
 @Log4j2
 public class StoreController implements StoreEndpoint ***REMOVED***
 
-  /**
-   * Store service business logic interface.
-   */
+  /** Store service business logic interface. */
   private final StoreService storeService;
 
   @Autowired
@@ -23,22 +21,33 @@ public class StoreController implements StoreEndpoint ***REMOVED***
     this.storeService = storeService;
 ***REMOVED***
 
-  /** ***REMOVED***@inheritDoc***REMOVED***
-   * @return*/
+  /**
+   * ***REMOVED***@inheritDoc***REMOVED***
+   *
+   * @return
+   */
   @Override
   public Mono<ProductAggregate> getProduct(int id) ***REMOVED***
     return storeService.getProduct(id);
 ***REMOVED***
 
-  /** ***REMOVED***@inheritDoc***REMOVED*** */
+  /**
+   * ***REMOVED***@inheritDoc***REMOVED***
+   *
+   * @return
+   */
   @Override
-  public void createProduct(ProductAggregate body) ***REMOVED***
-    storeService.createProduct(body);
+  public Mono<Void> createProduct(ProductAggregate body) ***REMOVED***
+    return storeService.createProduct(body);
 ***REMOVED***
 
-  /** ***REMOVED***@inheritDoc***REMOVED*** */
+  /**
+   * ***REMOVED***@inheritDoc***REMOVED***
+   *
+   * @return
+   */
   @Override
-  public void deleteProduct(int id) ***REMOVED***
-    storeService.deleteProduct(id);
+  public Mono<Void> deleteProduct(int id) ***REMOVED***
+    return storeService.deleteProduct(id);
 ***REMOVED***
 ***REMOVED***
