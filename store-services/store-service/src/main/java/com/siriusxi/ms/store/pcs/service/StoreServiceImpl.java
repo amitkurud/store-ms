@@ -12,11 +12,18 @@ import com.siriusxi.ms.store.pcs.integration.StoreIntegration;
 import com.siriusxi.ms.store.util.http.ServiceUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.security.core.context.ReactiveSecurityContextHolder.getContext;
 
 @Service("StoreServiceImpl")
 @Log4j2
@@ -24,6 +31,7 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
 
   private final ServiceUtil serviceUtil;
   private final StoreIntegration integration;
+  private final SecurityContext nullSC = new SecurityContextImpl();
 
   @Autowired
   public StoreServiceImpl(ServiceUtil serviceUtil, StoreIntegration integration) ***REMOVED***
@@ -32,18 +40,22 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
 ***REMOVED***
 
   @Override
-  public void createProduct(ProductAggregate body) ***REMOVED***
+  public Mono<Void> createProduct(ProductAggregate body) ***REMOVED***
+    return getContext().doOnSuccess(sc -> createProductImpl(sc, body)).then();
+***REMOVED***
 
+  private void createProductImpl(SecurityContext sc, ProductAggregate body) ***REMOVED***
     try ***REMOVED***
 
       log.debug(
-          "createCompositeProduct: creates a new composite entity for productId: ***REMOVED******REMOVED***",
-          body.productId());
+          "createProduct: creates a new composite entity for productId: ***REMOVED******REMOVED***", body.productId());
+
+      logAuthorizationInfo(sc);
 
       var product = new Product(body.productId(), body.name(), body.weight(), null);
       integration.createProduct(product);
 
-      if (body.recommendations() != null) ***REMOVED***
+      if (body.recommendations() != null && !body.recommendations().isEmpty()) ***REMOVED***
         body.recommendations()
             .forEach(
                 r -> ***REMOVED***
@@ -59,7 +71,7 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
             ***REMOVED***);
   ***REMOVED***
 
-      if (body.reviews() != null) ***REMOVED***
+      if (body.reviews() != null && !body.reviews().isEmpty()) ***REMOVED***
         body.reviews()
             .forEach(
                 r -> ***REMOVED***
@@ -75,11 +87,10 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
             ***REMOVED***);
   ***REMOVED***
       log.debug(
-          "createCompositeProduct: composite entities created for productId: ***REMOVED******REMOVED***",
-          body.productId());
+          "createProduct: composite entities created for productId: ***REMOVED******REMOVED***", body.productId());
 
 ***REMOVED*** catch (RuntimeException re) ***REMOVED***
-      log.warn("createCompositeProduct failed: ***REMOVED******REMOVED***", re.toString());
+      log.warn("createProduct failed: ***REMOVED******REMOVED***", re.toString());
       throw re;
 ***REMOVED***
 ***REMOVED***
@@ -89,41 +100,50 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
     return Mono.zip(
             values ->
                 createProductAggregate(
-                    (Product) values[0],
-                    (List<Recommendation>) values[1],
-                    (List<Review>) values[2],
+                    (SecurityContext) values[0],
+                    (Product) values[1],
+                    (List<Recommendation>) values[2],
+                    (List<Review>) values[3],
                     serviceUtil.getServiceAddress()),
+            getContext().defaultIfEmpty(nullSC),
             integration.getProduct(productId),
             integration.getRecommendations(productId).collectList(),
             integration.getReviews(productId).collectList())
-        .doOnError(ex -> log.warn("getCompositeProduct failed: ***REMOVED******REMOVED***", ex.toString()))
+        .doOnError(ex -> log.warn("getProduct failed: ***REMOVED******REMOVED***", ex.toString()))
         .log();
 ***REMOVED***
 
   @Override
-  public void deleteProduct(int productId) ***REMOVED***
+  public Mono<Void> deleteProduct(int productId) ***REMOVED***
+    return getContext().doOnSuccess(sc -> deleteProductImpl(sc, productId)).then();
+***REMOVED***
 
+  private void deleteProductImpl(SecurityContext sc, int productId) ***REMOVED***
     try ***REMOVED***
 
-      log.debug("deleteCompositeProduct: Deletes a product aggregate for productId: ***REMOVED******REMOVED***", productId);
+      log.debug("deleteProduct: Deletes a product aggregate for productId: ***REMOVED******REMOVED***", productId);
+      logAuthorizationInfo(sc);
 
       integration.deleteProduct(productId);
       integration.deleteRecommendations(productId);
       integration.deleteReviews(productId);
 
-      log.debug("deleteCompositeProduct: aggregate entities deleted for productId: ***REMOVED******REMOVED***", productId);
+      log.debug("deleteProduct: aggregate entities deleted for productId: ***REMOVED******REMOVED***", productId);
 
 ***REMOVED*** catch (RuntimeException re) ***REMOVED***
-      log.warn("deleteCompositeProduct failed: ***REMOVED******REMOVED***", re.toString());
+      log.warn("deleteProduct failed: ***REMOVED******REMOVED***", re.toString());
       throw re;
 ***REMOVED***
 ***REMOVED***
 
   private ProductAggregate createProductAggregate(
+      SecurityContext sc,
       Product product,
       List<Recommendation> recommendations,
       List<Review> reviews,
       String serviceAddress) ***REMOVED***
+
+    logAuthorizationInfo(sc);
 
     // 1. Setup product info
     int productId = product.getProductId();
@@ -155,9 +175,9 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
     // 4. Create info regarding the involved microservices addresses
     String productAddress = product.getServiceAddress();
     String reviewAddress =
-        (reviews != null && ! reviews.isEmpty()) ? reviews.get(0).getServiceAddress() : "";
+        (reviews != null && !reviews.isEmpty()) ? reviews.get(0).getServiceAddress() : "";
     String recommendationAddress =
-        (recommendations != null && ! recommendations.isEmpty())
+        (recommendations != null && !recommendations.isEmpty())
             ? recommendations.get(0).getServiceAddress()
             : "";
     ServiceAddresses serviceAddresses =
@@ -165,5 +185,50 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
 
     return new ProductAggregate(
         productId, name, weight, recommendationSummaries, reviewSummaries, serviceAddresses);
+***REMOVED***
+
+
+  /*
+   * Methods logAuthorizationInfo(SecurityContext sc),
+   * and     logAuthorizationInfo(Jwt jwt)
+   * has been added to log relevant parts from the JWT-encoded
+   * access token upon each call to the API.
+   *
+   * The access token can be acquired using the standard Spring Security, SecurityContext,
+   * which, in a reactive environment, can be acquired using the static helper method,
+   * ReactiveSecurityContextHolder.getContext().
+   *
+   */
+  private void logAuthorizationInfo(SecurityContext sc) ***REMOVED***
+    if (sc != null
+        && sc.getAuthentication() != null
+        && sc.getAuthentication() instanceof JwtAuthenticationToken) ***REMOVED***
+      Jwt jwtToken = ((JwtAuthenticationToken) sc.getAuthentication()).getToken();
+      logAuthorizationInfo(jwtToken);
+***REMOVED*** else ***REMOVED***
+      log.warn("No JWT based Authentication supplied, running tests are we?");
+***REMOVED***
+***REMOVED***
+
+  private void logAuthorizationInfo(Jwt jwt) ***REMOVED***
+    if (jwt == null) ***REMOVED***
+      log.warn("No JWT supplied, running tests are we?");
+***REMOVED*** else ***REMOVED***
+      if (log.isDebugEnabled()) ***REMOVED***
+        URL issuer = jwt.getIssuer();
+        List<String> audience = jwt.getAudience();
+        Object subject = jwt.getClaims().get("sub");
+        Object scopes = jwt.getClaims().get("scope");
+        Object expires = jwt.getClaims().get("exp");
+
+        log.debug(
+            "Authorization info: Subject: ***REMOVED******REMOVED***, scopes: ***REMOVED******REMOVED***, expires ***REMOVED******REMOVED***: issuer: ***REMOVED******REMOVED***, audience: ***REMOVED******REMOVED***",
+            subject,
+            scopes,
+            expires,
+            issuer,
+            audience);
+  ***REMOVED***
+***REMOVED***
 ***REMOVED***
 ***REMOVED***
