@@ -32,8 +32,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
     */
     classes = ***REMOVED***StoreServiceApplication.class, TestSecurityConfig.class***REMOVED***,
     properties = ***REMOVED***
-      "spring.main.allow-bean-definition-overriding=true",
-      "eureka.client.enabled=false"
+      "spring.main.allow-bean-definition-overriding: true",
+      "eureka.client.enabled: false",
+      "spring.cloud.config.enabled: false",
+      "server.error.include-message: always"
 ***REMOVED***)
 class StoreServiceApplicationTests ***REMOVED***
 

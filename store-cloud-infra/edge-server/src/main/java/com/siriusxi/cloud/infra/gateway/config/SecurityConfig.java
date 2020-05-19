@@ -18,18 +18,18 @@ public class SecurityConfig ***REMOVED***
 
     @Bean
     SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http)  ***REMOVED***
-        http
-                .csrf().disable()
-                .authorizeExchange()
-                .pathMatchers("/headerrouting/**").permitAll()
-                .pathMatchers("/actuator/**").permitAll()
-                .pathMatchers("/eureka/**").permitAll()
-                .pathMatchers("/oauth/**").permitAll()
-                .anyExchange().authenticated()
-                .and()
-                .oauth2ResourceServer()
-                .jwt();
-        return http.build();
+    http.csrf().disable()
+        .authorizeExchange()
+            .pathMatchers("/headerrouting/**").permitAll()
+            .pathMatchers("/actuator/**").permitAll()
+            .pathMatchers("/eureka/**").permitAll()
+            .pathMatchers("/oauth/**").permitAll()
+            .anyExchange().authenticated()
+        .and()
+            .oauth2ResourceServer()
+            .jwt();
+
+    return http.build();
 ***REMOVED***
 
 ***REMOVED***
