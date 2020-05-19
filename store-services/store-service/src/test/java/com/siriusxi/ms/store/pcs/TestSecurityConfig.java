@@ -20,10 +20,9 @@ public class TestSecurityConfig ***REMOVED***
   public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) ***REMOVED***
     return http
             .csrf()
-            .disable()
+              .disable()
             .authorizeExchange()
-            .anyExchange()
-            .permitAll()
+              .anyExchange().permitAll()
             .and()
             .build();
 ***REMOVED***
