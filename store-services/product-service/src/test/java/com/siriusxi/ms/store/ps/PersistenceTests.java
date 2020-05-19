@@ -10,7 +10,10 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import reactor.test.StepVerifier;
 
-@DataMongoTest
+@DataMongoTest(properties = ***REMOVED***
+        "spring.cloud.config.enabled: false",
+        "spring.data.mongodb.auto-index-creation: true",
+        "app.database.host: localhost"***REMOVED***)
 class PersistenceTests ***REMOVED***
 
   @Autowired private ProductRepository repository;
@@ -83,7 +86,8 @@ class PersistenceTests ***REMOVED***
 
   @Test
   public void duplicateError() ***REMOVED***
-    StepVerifier.create(repository.save(new ProductEntity(savedEntity.getProductId(), "n", 1)))
+    StepVerifier
+            .create(repository.save(new ProductEntity(savedEntity.getProductId(), "n", 1)))
         .expectError(DuplicateKeyException.class)
         .verify();
 ***REMOVED***

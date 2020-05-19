@@ -11,24 +11,26 @@ import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(
+    webEnvironment = RANDOM_PORT,
+    properties = ***REMOVED***"spring.cloud.config.enabled: false"***REMOVED***)
 class EurekaDiscoveryServerTests ***REMOVED***
 
-	@Value("$***REMOVED***app.eureka.username***REMOVED***")
-	private String username;
+  @Value("$***REMOVED***app.eureka.username***REMOVED***")
+  private String username;
 
-	@Value("$***REMOVED***app.eureka.password***REMOVED***")
-	private String password;
+  @Value("$***REMOVED***app.eureka.password***REMOVED***")
+  private String password;
 
-	private TestRestTemplate testRestTemplate;
+  private TestRestTemplate testRestTemplate;
 
-	@Autowired
-	public void setTestRestTemplate(TestRestTemplate testRestTemplate) ***REMOVED***
-		this.testRestTemplate = testRestTemplate.withBasicAuth(username, password);
-	***REMOVED***
+  @Autowired
+  public void setTestRestTemplate(TestRestTemplate testRestTemplate) ***REMOVED***
+    this.testRestTemplate = testRestTemplate.withBasicAuth(username, password);
+***REMOVED***
 
-	@Test
-	public void catalogLoads() ***REMOVED***
+  @Test
+  public void catalogLoads() ***REMOVED***
 
 		String expectedResponseBody =
 				"***REMOVED***\"applications\":***REMOVED***\"versions__delta\":\"1\"," +

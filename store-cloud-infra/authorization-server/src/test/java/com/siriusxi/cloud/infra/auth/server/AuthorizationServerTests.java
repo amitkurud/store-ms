@@ -16,7 +16,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Mohamed Taman
  * @since 5.0
  */
-@SpringBootTest(properties = ***REMOVED***"eureka.client.enabled=false"***REMOVED***)
+@SpringBootTest(properties = ***REMOVED***
+        "eureka.client.enabled: false",
+        "spring.cloud.config.enabled: false"***REMOVED***)
 @AutoConfigureMockMvc
 class AuthorizationServerTests ***REMOVED***
   @Autowired MockMvc mvc;
@@ -37,6 +39,8 @@ class AuthorizationServerTests ***REMOVED***
   @Test
   public void requestJwkSetWhenUsingDefaultsThenOk() throws Exception ***REMOVED***
 
-    this.mvc.perform(get("/.well-known/jwks.json")).andExpect(status().isOk());
+    this.mvc
+            .perform(get("/.well-known/jwks.json"))
+            .andExpect(status().isOk());
 ***REMOVED***
 ***REMOVED***
