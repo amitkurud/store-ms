@@ -17,7 +17,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  *
  *
  * @author mohamed.taman
- * @version v1.0
+ * @version v5.8
  * @since v3.0 codename Storm
  */
 @Api("REST API for Springy Store products information.")
@@ -54,8 +54,11 @@ public interface StoreEndpoint extends StoreService ***REMOVED***
   ***REMOVED***)
   @GetMapping(value = "products/***REMOVED***id***REMOVED***",
           produces = APPLICATION_JSON_VALUE)
-  Mono<ProductAggregate> getProduct(@PathVariable int id);
-
+  @Override
+  Mono<ProductAggregate> getProduct(
+      @PathVariable int id,
+      @RequestParam(value = "delay", required = false, defaultValue = "0") int delay,
+      @RequestParam(value = "faultPercent",required = false, defaultValue = "0") int faultPercent);
   /**
    * Sample usage:
    *
@@ -65,7 +68,7 @@ public interface StoreEndpoint extends StoreService ***REMOVED***
    *
    * @param body of composite product elements definition.
    * @since v3.0 codename Storm.
-   * @return
+   * @return Nothing.
    */
   @ApiOperation(
       value = "$***REMOVED***api.product-composite.create-composite-product.description***REMOVED***",
@@ -88,6 +91,7 @@ public interface StoreEndpoint extends StoreService ***REMOVED***
   @PostMapping(
           value = "products",
           consumes = APPLICATION_JSON_VALUE)
+  @Override
   Mono<Void> createProduct(@RequestBody ProductAggregate body);
 
   /**
@@ -97,7 +101,7 @@ public interface StoreEndpoint extends StoreService ***REMOVED***
    *
    * @param id is the product id to delete it.
    * @since v3.0 codename Storm.
-   * @return
+   * @return Nothing.
    */
   @ApiOperation(
       value = "$***REMOVED***api.product-composite.delete-composite-product.description***REMOVED***",
@@ -118,5 +122,6 @@ public interface StoreEndpoint extends StoreService ***REMOVED***
                 """)
   ***REMOVED***)
   @DeleteMapping("products/***REMOVED***id***REMOVED***")
+  @Override
   Mono<Void> deleteProduct(@PathVariable int id);
 ***REMOVED***

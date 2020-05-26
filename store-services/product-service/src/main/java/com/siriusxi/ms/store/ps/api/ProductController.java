@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
  *
  * @see ProductEndpoint
  * @author mohamed.taman
- * @version v4.0
+ * @version v5.8
  * @since v3.0 codename Storm
  */
 @RestController
@@ -32,7 +32,7 @@ public class ProductController implements ProductEndpoint ***REMOVED***
 
   /** ***REMOVED***@inheritDoc***REMOVED*** */
   @Override
-  public Mono<Product> getProduct(int id) ***REMOVED***
-    return prodService.getProduct(id);
+  public Mono<Product> getProduct(int id, int delay, int faultPercent) ***REMOVED***
+    return prodService.getProduct(id, delay, faultPercent);
 ***REMOVED***
 ***REMOVED***
