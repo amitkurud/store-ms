@@ -9,7 +9,10 @@ import com.siriusxi.ms.store.api.core.product.dto.Product;
 import com.siriusxi.ms.store.api.core.recommendation.dto.Recommendation;
 import com.siriusxi.ms.store.api.core.review.dto.Review;
 import com.siriusxi.ms.store.pcs.integration.StoreIntegration;
+import com.siriusxi.ms.store.util.exceptions.NotFoundException;
 import com.siriusxi.ms.store.util.http.ServiceUtil;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerOpenException;
+import io.github.resilience4j.reactor.retry.RetryExceptionWrapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
@@ -17,11 +20,13 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
+
 import reactor.core.publisher.Mono;
 
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 import static org.springframework.security.core.context.ReactiveSecurityContextHolder.getContext;
 
@@ -52,42 +57,36 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
 
       logAuthorizationInfo(sc);
 
-      var product = new Product(body.productId(), body.name(), body.weight(), null);
-      integration.createProduct(product);
+      integration.createProduct(new Product(body.productId(), body.name(), body.weight(), null));
 
       if (body.recommendations() != null && !body.recommendations().isEmpty()) ***REMOVED***
         body.recommendations()
             .forEach(
-                r -> ***REMOVED***
-                  var recommendation =
-                      new Recommendation(
-                          body.productId(),
-                          r.recommendationId(),
-                          r.author(),
-                          r.rate(),
-                          r.content(),
-                          null);
-                  integration.createRecommendation(recommendation);
-            ***REMOVED***);
+                r ->
+                    integration.createRecommendation(
+                        new Recommendation(
+                            body.productId(),
+                            r.recommendationId(),
+                            r.author(),
+                            r.rate(),
+                            r.content(),
+                            null)));
   ***REMOVED***
 
       if (body.reviews() != null && !body.reviews().isEmpty()) ***REMOVED***
         body.reviews()
             .forEach(
-                r -> ***REMOVED***
-                  Review review =
-                      new Review(
-                          body.productId(),
-                          r.reviewId(),
-                          r.author(),
-                          r.subject(),
-                          r.content(),
-                          null);
-                  integration.createReview(review);
-            ***REMOVED***);
+                r ->
+                    integration.createReview(
+                        new Review(
+                            body.productId(),
+                            r.reviewId(),
+                            r.author(),
+                            r.subject(),
+                            r.content(),
+                            null)));
   ***REMOVED***
-      log.debug(
-          "createProduct: composite entities created for productId: ***REMOVED******REMOVED***", body.productId());
+      log.debug("createProduct: composite entities created for productId: ***REMOVED******REMOVED***", body.productId());
 
 ***REMOVED*** catch (RuntimeException re) ***REMOVED***
       log.warn("createProduct failed: ***REMOVED******REMOVED***", re.toString());
@@ -96,7 +95,7 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
 ***REMOVED***
 
   @Override
-  public Mono<ProductAggregate> getProduct(int productId) ***REMOVED***
+  public Mono<ProductAggregate> getProduct(int productId, int delay, int faultPercent) ***REMOVED***
     return Mono.zip(
             values ->
                 createProductAggregate(
@@ -106,7 +105,11 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
                     (List<Review>) values[3],
                     serviceUtil.getServiceAddress()),
             getContext().defaultIfEmpty(nullSC),
-            integration.getProduct(productId),
+            integration
+                .getProduct(productId, delay, faultPercent)
+                    .onErrorMap(RetryExceptionWrapper.class, Throwable::getCause)
+                    .onErrorReturn(CircuitBreakerOpenException.class,
+                            getProductFallbackValue(productId)),
             integration.getRecommendations(productId).collectList(),
             integration.getReviews(productId).collectList())
         .doOnError(ex -> log.warn("getProduct failed: ***REMOVED******REMOVED***", ex.toString()))
@@ -134,6 +137,20 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
       log.warn("deleteProduct failed: ***REMOVED******REMOVED***", re.toString());
       throw re;
 ***REMOVED***
+***REMOVED***
+
+  private Product getProductFallbackValue(int productId) ***REMOVED***
+
+    log.warn("Creating a fallback product for productId = ***REMOVED******REMOVED***", productId);
+
+    if (productId == 14) ***REMOVED***
+      String errMsg = "Product Id: " + productId + " not found in fallback cache!";
+      log.warn(errMsg);
+      throw new NotFoundException(errMsg);
+***REMOVED***
+
+    return new Product(
+        productId, "Fallback product" + productId, productId, serviceUtil.getServiceAddress());
 ***REMOVED***
 
   private ProductAggregate createProductAggregate(
@@ -186,7 +203,6 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
     return new ProductAggregate(
         productId, name, weight, recommendationSummaries, reviewSummaries, serviceAddresses);
 ***REMOVED***
-
 
   /*
    * Methods logAuthorizationInfo(SecurityContext sc),

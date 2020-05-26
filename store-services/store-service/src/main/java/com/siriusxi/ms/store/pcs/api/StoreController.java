@@ -24,17 +24,17 @@ public class StoreController implements StoreEndpoint ***REMOVED***
   /**
    * ***REMOVED***@inheritDoc***REMOVED***
    *
-   * @return
+   * @return final product.
    */
   @Override
-  public Mono<ProductAggregate> getProduct(int id) ***REMOVED***
-    return storeService.getProduct(id);
+  public Mono<ProductAggregate> getProduct(int id, int delay, int faultPercent) ***REMOVED***
+    return storeService.getProduct(id, delay, faultPercent);
 ***REMOVED***
 
   /**
    * ***REMOVED***@inheritDoc***REMOVED***
    *
-   * @return
+   * @return nothing.
    */
   @Override
   public Mono<Void> createProduct(ProductAggregate body) ***REMOVED***
@@ -44,7 +44,7 @@ public class StoreController implements StoreEndpoint ***REMOVED***
   /**
    * ***REMOVED***@inheritDoc***REMOVED***
    *
-   * @return
+   * @return nothing.
    */
   @Override
   public Mono<Void> deleteProduct(int id) ***REMOVED***
