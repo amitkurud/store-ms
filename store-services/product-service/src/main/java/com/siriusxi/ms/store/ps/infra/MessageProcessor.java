@@ -34,7 +34,7 @@ public class MessageProcessor ***REMOVED***
                 productService.createProduct(product);
         ***REMOVED***
             case DELETE -> ***REMOVED***
-                log.info("Delete recommendations with Product Id: ***REMOVED******REMOVED***", event.getKey());
+                log.info("Delete product with Product Id: ***REMOVED******REMOVED***", event.getKey());
                 productService.deleteProduct(event.getKey());
         ***REMOVED***
             default -> ***REMOVED***

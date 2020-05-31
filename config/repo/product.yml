@@ -1,8 +1,8 @@
 spring:
   data:
     mongodb:
-      host: $***REMOVED***app.database.host***REMOVED***
-      port: 27017
+      host: $***REMOVED***app.database.mongo.host***REMOVED***
+      port: $***REMOVED***app.database.mongo.port***REMOVED***
       database: product-db
       auto-index-creation: true
 
@@ -28,9 +28,6 @@ spring:
       kafka:
         bindings:
           input.consumer.enableDlq: true
-        binder:
-          brokers: $***REMOVED***app.messaging.kafka.broker***REMOVED***
-          default-broker-port: 9092
 
 server:
   port: 9081
@@ -44,11 +41,22 @@ logging.level:
 # Also profiles could be separated in its owen file
 # with file name format of "application-docker.yaml"
 ***REMOVED***
-spring:
-  profiles: docker
-
+spring.profiles: docker
 server.port: 8080
 
-app:
-  database:
-    host: mongodb
+***REMOVED***
+spring:
+  profiles: streaming_partitioned
+  cloud.stream.bindings.input.consumer:
+    partitioned: true
+    instanceCount: 2
+
+***REMOVED***
+spring:
+  profiles: streaming_instance_0
+  cloud.stream.bindings.input.consumer.instanceIndex: 0
+
+***REMOVED***
+spring:
+  profiles: streaming_instance_1
+  cloud.stream.bindings.input.consumer.instanceIndex: 1
