@@ -212,6 +212,7 @@ public class StoreIntegration implements ProductService, RecommendationService, 
 
   private String getErrorMessage(WebClientResponseException ex) ***REMOVED***
     try ***REMOVED***
+      System.out.println(">>>>>>>>>>>>>>>>>>>>>>>:"+ mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).message());
       return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).message();
 ***REMOVED*** catch (IOException ioException) ***REMOVED***
       return ex.getMessage();
