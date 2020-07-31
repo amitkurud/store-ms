@@ -18,7 +18,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  * @since v3.0 codename Storm
  */
 @RequestMapping("recommendations")
-public interface RecommendationEndpoint extends RecommendationService ***REMOVED***
+public interface RecommendationEndpoint extends RecommendationService {
 
   /**
    * Sample usage:
@@ -32,4 +32,4 @@ public interface RecommendationEndpoint extends RecommendationService ***REMOVED
   @GetMapping(produces = APPLICATION_JSON_VALUE)
   @Override
   Flux<Recommendation> getRecommendations(@RequestParam("productId") int productId);
-***REMOVED***
+}

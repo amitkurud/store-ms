@@ -9,7 +9,7 @@ import org.mapstruct.factory.Mappers;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface RecommendationMapper ***REMOVED***
+public interface RecommendationMapper {
 
   RecommendationMapper INSTANCE = Mappers.getMapper(RecommendationMapper.class);
 
@@ -25,4 +25,4 @@ public interface RecommendationMapper ***REMOVED***
   List<Recommendation> entityListToApiList(List<RecommendationEntity> entity);
 
   List<RecommendationEntity> apiListToEntityList(List<Recommendation> api);
-***REMOVED***
+}

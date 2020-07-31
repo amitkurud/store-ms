@@ -12,13 +12,13 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 /** For configuring the end users recognized by this Authorization Server */
 @Configuration
-class UserConfig extends WebSecurityConfigurerAdapter ***REMOVED***
+class UserConfig extends WebSecurityConfigurerAdapter {
 
   private final PasswordEncoder encoder =
           PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
   @Override
-  protected void configure(HttpSecurity http) throws Exception ***REMOVED***
+  protected void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
         .antMatchers("/actuator/**")
         .permitAll()
@@ -31,11 +31,11 @@ class UserConfig extends WebSecurityConfigurerAdapter ***REMOVED***
         .and()
         .csrf()
         .ignoringRequestMatchers(request -> "/introspect".equals(request.getRequestURI()));
-***REMOVED***
+  }
 
   @Bean
   @Override
-  public UserDetailsService userDetailsService() ***REMOVED***
+  public UserDetailsService userDetailsService() {
 
     return new InMemoryUserDetailsManager(
         User.builder()
@@ -43,5 +43,5 @@ class UserConfig extends WebSecurityConfigurerAdapter ***REMOVED***
             .password(encoder.encode("password"))
             .roles("USER")
             .build());
-***REMOVED***
-***REMOVED***
+  }
+}

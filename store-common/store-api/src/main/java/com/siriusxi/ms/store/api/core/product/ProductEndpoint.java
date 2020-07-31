@@ -20,7 +20,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  * @since v3.0 codename Storm
  */
 @RequestMapping("products")
-public interface ProductEndpoint extends ProductService ***REMOVED***
+public interface ProductEndpoint extends ProductService {
 
   /**
    * Sample usage:
@@ -31,10 +31,10 @@ public interface ProductEndpoint extends ProductService ***REMOVED***
    * @return Product the product, if found, else null.
    * @since v3.0 codename Storm
    */
-  @GetMapping(value = "***REMOVED***productId***REMOVED***", produces = APPLICATION_JSON_VALUE)
+  @GetMapping(value = "{productId}", produces = APPLICATION_JSON_VALUE)
   @Override
   Mono<Product> getProduct(
       @PathVariable("productId") int id,
       @RequestParam(value = "delay", required = false, defaultValue = "0") int delay,
       @RequestParam(value = "faultPercent", required = false, defaultValue = "0") int faultPercent);
-***REMOVED***
+}

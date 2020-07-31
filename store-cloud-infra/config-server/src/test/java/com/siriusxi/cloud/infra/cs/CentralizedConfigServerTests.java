@@ -8,11 +8,11 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
-    properties = ***REMOVED***"spring.profiles.active: native"***REMOVED***)
-class CentralizedConfigServerTests ***REMOVED***
+    properties = {"spring.profiles.active: native"})
+class CentralizedConfigServerTests {
 
   @Test
-  void contextLoads() ***REMOVED***
+  void contextLoads() {
     Assert.assertTrue(true);
-***REMOVED***
-***REMOVED***
+  }
+}

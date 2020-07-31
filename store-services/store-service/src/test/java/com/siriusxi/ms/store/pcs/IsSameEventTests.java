@@ -13,12 +13,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-class IsSameEventTests ***REMOVED***
+class IsSameEventTests {
 
   ObjectMapper mapper = new ObjectMapper();
 
   @Test
-  public void testEventObjectCompare() throws JsonProcessingException ***REMOVED***
+  public void testEventObjectCompare() throws JsonProcessingException {
 
     /*
      Event #1 and #2 are the same event, but occurs as different times
@@ -34,5 +34,5 @@ class IsSameEventTests ***REMOVED***
     assertThat(event1JSon, is(sameEventExceptCreatedAt(event2)));
     assertThat(event1JSon, not(sameEventExceptCreatedAt(event3)));
     assertThat(event1JSon, not(sameEventExceptCreatedAt(event4)));
-***REMOVED***
-***REMOVED***
+  }
+}

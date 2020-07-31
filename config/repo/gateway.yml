@@ -1,6 +1,6 @@
 spring:
   security.oauth2.resourceserver.jwt:
-    jwk-set-uri: http://$***REMOVED***app.auth-server.host***REMOVED***:$***REMOVED***app.auth-server.port***REMOVED***/.well-known/jwks.json
+    jwk-set-uri: http://${app.auth-server.host}:${app.auth-server.port}/.well-known/jwks.json
   # As Spring Cloud Ribbon is in maintenance mode.
   # It is recommended switching to BlockingLoadBalancerClient instead.
   cloud:
@@ -21,30 +21,30 @@ spring:
             - Path=/oauth/**
 
         - id: eureka-api
-          uri: http://$***REMOVED***app.eureka.host***REMOVED***:$***REMOVED***app.eureka.port***REMOVED***
+          uri: http://${app.eureka.host}:${app.eureka.port}
           predicates:
-            - Path=/eureka/api/***REMOVED***segment***REMOVED***
+            - Path=/eureka/api/{segment}
           filters:
-            - SetPath=/eureka/***REMOVED***segment***REMOVED***
+            - SetPath=/eureka/{segment}
 
         - id: eureka-web-start
-          uri: http://$***REMOVED***app.eureka.host***REMOVED***:$***REMOVED***app.eureka.port***REMOVED***
+          uri: http://${app.eureka.host}:${app.eureka.port}
           predicates:
             - Path=/eureka/web
           filters:
             - SetPath=/
 
         - id: eureka-web-other
-          uri: http://$***REMOVED***app.eureka.host***REMOVED***:$***REMOVED***app.eureka.port***REMOVED***
+          uri: http://${app.eureka.host}:${app.eureka.port}
           predicates:
             - Path=/eureka/**
 
         - id: config-server
-          uri: http://$***REMOVED***app.config-server.host***REMOVED***:$***REMOVED***app.config-server.port***REMOVED***
+          uri: http://${app.config-server.host}:${app.config-server.port}
           predicates:
             - Path=/config/**
           filters:
-            - RewritePath=/config/(?<segment>.*), /$\***REMOVED***segment***REMOVED***
+            - RewritePath=/config/(?<segment>.*), /$\{segment}
 
         # Testing URLs
         - id: host_route_200
@@ -83,7 +83,7 @@ logging.level:
   org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator: INFO
   org.springframework.web.server.adapter.HttpWebHandlerAdapter: TRACE
 
-***REMOVED***
+---
 spring:
   profiles: external-OAuth-Provider
   security.oauth2.resourceserver:

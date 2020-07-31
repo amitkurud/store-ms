@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
-public interface ProductMapper ***REMOVED***
+public interface ProductMapper {
 
   ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 
@@ -17,4 +17,4 @@ public interface ProductMapper ***REMOVED***
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "version", ignore = true)
   ProductEntity apiToEntity(Product api);
-***REMOVED***
+}

@@ -13,10 +13,10 @@ import static java.lang.String.format;
 @CompoundIndex(
     name = "prod-rec-id",
     unique = true,
-    def = "***REMOVED***'productId': 1, 'recommendationId' : 1***REMOVED***")
+    def = "{'productId': 1, 'recommendationId' : 1}")
 @Data
 @NoArgsConstructor
-public class RecommendationEntity ***REMOVED***
+public class RecommendationEntity {
 
   @Id private String id;
 
@@ -29,11 +29,11 @@ public class RecommendationEntity ***REMOVED***
   private String content;
 
   public RecommendationEntity(
-      int productId, int recommendationId, String author, int rating, String content) ***REMOVED***
+      int productId, int recommendationId, String author, int rating, String content) {
     this.productId = productId;
     this.recommendationId = recommendationId;
     this.author = author;
     this.rating = rating;
     this.content = content;
-***REMOVED***
-***REMOVED***
+  }
+}

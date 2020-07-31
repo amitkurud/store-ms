@@ -14,10 +14,10 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
  * @version v1.0
  */
 @EnableWebFluxSecurity
-public class SecurityConfig ***REMOVED***
+public class SecurityConfig {
 
     @Bean
-    SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http)  ***REMOVED***
+    SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http)  {
     http.csrf().disable()
         .authorizeExchange()
             .pathMatchers("/headerrouting/**").permitAll()
@@ -30,6 +30,6 @@ public class SecurityConfig ***REMOVED***
             .jwt();
 
     return http.build();
-***REMOVED***
+    }
 
-***REMOVED***
+}

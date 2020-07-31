@@ -21,19 +21,19 @@ import reactor.core.publisher.Flux;
  */
 @RestController
 @Log4j2
-public class ReviewController implements ReviewEndpoint ***REMOVED***
+public class ReviewController implements ReviewEndpoint {
 
   /** Review service business logic interface. */
   private final ReviewService reviewService;
 
   @Autowired
-  public ReviewController(@Qualifier("ReviewServiceImpl") ReviewService reviewService) ***REMOVED***
+  public ReviewController(@Qualifier("ReviewServiceImpl") ReviewService reviewService) {
     this.reviewService = reviewService;
-***REMOVED***
+  }
 
-  /** ***REMOVED***@inheritDoc***REMOVED*** */
+  /** {@inheritDoc} */
   @Override
-  public Flux<Review> getReviews(int productId) ***REMOVED***
+  public Flux<Review> getReviews(int productId) {
     return reviewService.getReviews(productId);
-***REMOVED***
-***REMOVED***
+  }
+}

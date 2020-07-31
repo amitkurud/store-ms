@@ -19,7 +19,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  * @since v3.0 codename Storm
  */
 @RequestMapping("reviews")
-public interface ReviewEndpoint extends ReviewService ***REMOVED***
+public interface ReviewEndpoint extends ReviewService {
 
   /**
    * Sample usage:
@@ -33,4 +33,4 @@ public interface ReviewEndpoint extends ReviewService ***REMOVED***
   @GetMapping(produces = APPLICATION_JSON_VALUE)
   @Override
   Flux<Review> getReviews(@RequestParam("productId") int productId);
-***REMOVED***
+}

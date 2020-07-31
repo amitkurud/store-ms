@@ -20,19 +20,19 @@ import reactor.core.publisher.Mono;
  */
 @RestController
 @Log4j2
-public class ProductController implements ProductEndpoint ***REMOVED***
+public class ProductController implements ProductEndpoint {
 
   /** Product service business logic interface. */
   private final ProductService prodService;
 
   @Autowired
-  public ProductController(@Qualifier("ProductServiceImpl") ProductService prodService) ***REMOVED***
+  public ProductController(@Qualifier("ProductServiceImpl") ProductService prodService) {
     this.prodService = prodService;
-***REMOVED***
+  }
 
-  /** ***REMOVED***@inheritDoc***REMOVED*** */
+  /** {@inheritDoc} */
   @Override
-  public Mono<Product> getProduct(int id, int delay, int faultPercent) ***REMOVED***
+  public Mono<Product> getProduct(int id, int delay, int faultPercent) {
     return prodService.getProduct(id, delay, faultPercent);
-***REMOVED***
-***REMOVED***
+  }
+}

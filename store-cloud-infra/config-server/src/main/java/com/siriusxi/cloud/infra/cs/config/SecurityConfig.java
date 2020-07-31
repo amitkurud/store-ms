@@ -5,10 +5,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter ***REMOVED***
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception ***REMOVED***
+    protected void configure(HttpSecurity http) throws Exception {
     http
         // Disable CRCF to allow POST to /encrypt and /decrypt endpoints
         .csrf()
@@ -17,5 +17,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter ***REMOVED***
             .anyRequest().authenticated()
             .and()
             .httpBasic();
-***REMOVED***
-***REMOVED***
+    }
+}

@@ -27,7 +27,7 @@ import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
  */
 @RestControllerAdvice
 @Log4j2
-class GlobalControllerExceptionHandler ***REMOVED***
+class GlobalControllerExceptionHandler {
 
   /**
    * Method to handle <i>not found exceptions</i> http error info.
@@ -40,10 +40,10 @@ class GlobalControllerExceptionHandler ***REMOVED***
   @ResponseStatus(NOT_FOUND)
   @ExceptionHandler(NotFoundException.class)
   public @ResponseBody HttpErrorInfo handleNotFoundExceptions(
-      ServerHttpRequest request, Exception ex) ***REMOVED***
+      ServerHttpRequest request, Exception ex) {
 
     return createHttpErrorInfo(NOT_FOUND, request, ex);
-***REMOVED***
+  }
 
   /**
    * Method to handle <i>invalid input exception</i> http error info.
@@ -56,17 +56,17 @@ class GlobalControllerExceptionHandler ***REMOVED***
   @ResponseStatus(UNPROCESSABLE_ENTITY)
   @ExceptionHandler(InvalidInputException.class)
   public @ResponseBody HttpErrorInfo handleInvalidInputException(
-      ServerHttpRequest request, Exception ex) ***REMOVED***
+      ServerHttpRequest request, Exception ex) {
 
     return createHttpErrorInfo(UNPROCESSABLE_ENTITY, request, ex);
-***REMOVED***
+  }
 
   private HttpErrorInfo createHttpErrorInfo(
-      HttpStatus httpStatus, ServerHttpRequest request, Exception ex) ***REMOVED***
+      HttpStatus httpStatus, ServerHttpRequest request, Exception ex) {
     final var path = request.getPath().pathWithinApplication().value();
     final var message = ex.getMessage();
 
-    log.debug("Returning HTTP status: ***REMOVED******REMOVED*** for path: ***REMOVED******REMOVED***, message: ***REMOVED******REMOVED***", httpStatus, path, message);
+    log.debug("Returning HTTP status: {} for path: {}, message: {}", httpStatus, path, message);
     return new HttpErrorInfo(httpStatus, path, message);
-***REMOVED***
-***REMOVED***
+  }
+}

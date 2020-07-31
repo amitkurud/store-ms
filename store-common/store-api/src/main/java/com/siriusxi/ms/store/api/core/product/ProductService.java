@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
  * @version v5.8
  * @since v0.1
  */
-public interface ProductService ***REMOVED***
+public interface ProductService {
 
   /**
    * Get the product with Id from repository. It is a Non-Blocking API.
@@ -37,9 +37,9 @@ public interface ProductService ***REMOVED***
    * @param body product to save.
    * @since v0.1
    */
-  default Product createProduct(Product body) ***REMOVED***
+  default Product createProduct(Product body) {
     return null;
-***REMOVED***
+  }
 
   /**
    * Delete the product from repository.
@@ -48,5 +48,5 @@ public interface ProductService ***REMOVED***
    * @param id to be deleted.
    * @since v0.1
    */
-  default void deleteProduct(int id) ***REMOVED******REMOVED***
-***REMOVED***
+  default void deleteProduct(int id) {}
+}

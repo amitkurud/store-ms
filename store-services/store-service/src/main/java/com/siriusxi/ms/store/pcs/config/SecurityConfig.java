@@ -19,10 +19,10 @@ import static org.springframework.http.HttpMethod.*;
   * @version v1.0
  */
 @EnableWebFluxSecurity
-public class SecurityConfig ***REMOVED***
+public class SecurityConfig {
 
   @Bean
-  SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) ***REMOVED***
+  SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
     var baseUri = "/store/api/v1/products/**";
     /*
      By convention, OAuth 2.0 scopes should be prefixed with SCOPE_
@@ -47,5 +47,5 @@ public class SecurityConfig ***REMOVED***
           .jwt();
 
     return http.build();
-***REMOVED***
-***REMOVED***
+  }
+}

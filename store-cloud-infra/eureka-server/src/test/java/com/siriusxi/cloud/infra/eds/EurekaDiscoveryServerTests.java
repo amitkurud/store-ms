@@ -13,45 +13,45 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
-    properties = ***REMOVED***
+    properties = {
       "spring.cloud.config.enabled: false",
       "eureka.client.register-with-eureka: false",
       "eureka.client.fetch-registry: false",
       "management.health.rabbit.enabled=false",
       "app.eureka.user: mt",
       "app.eureka.pass: p"
-***REMOVED***)
-class EurekaDiscoveryServerTests ***REMOVED***
+    })
+class EurekaDiscoveryServerTests {
 
-  @Value("$***REMOVED***app.eureka.user***REMOVED***")
+  @Value("${app.eureka.user}")
   private String username;
 
-  @Value("$***REMOVED***app.eureka.pass***REMOVED***")
+  @Value("${app.eureka.pass}")
   private String password;
 
   private TestRestTemplate testRestTemplate;
 
   @Autowired
-  public void setTestRestTemplate(TestRestTemplate testRestTemplate) ***REMOVED***
+  public void setTestRestTemplate(TestRestTemplate testRestTemplate) {
     this.testRestTemplate = testRestTemplate.withBasicAuth(username, password);
-***REMOVED***
+  }
 
   @Test
-  public void catalogLoads() ***REMOVED***
+  public void catalogLoads() {
 
     String expectedResponseBody =
-        "***REMOVED***\"applications\":***REMOVED***\"versions__delta\":\"1\","
-            + "\"apps__hashcode\":\"\",\"application\":[]***REMOVED******REMOVED***";
+        "{\"applications\":{\"versions__delta\":\"1\","
+            + "\"apps__hashcode\":\"\",\"application\":[]}}";
     ResponseEntity<String> entity = testRestTemplate.getForEntity("/eureka/apps", String.class);
     assertEquals(HttpStatus.OK, entity.getStatusCode());
     assertEquals(expectedResponseBody, entity.getBody());
-***REMOVED***
+  }
 
   @Test
-  public void healthy() ***REMOVED***
-    String expectedResponseBody = "***REMOVED***\"status\":\"UP\"***REMOVED***";
+  public void healthy() {
+    String expectedResponseBody = "{\"status\":\"UP\"}";
     ResponseEntity<String> entity = testRestTemplate.getForEntity("/actuator/health", String.class);
     assertEquals(HttpStatus.OK, entity.getStatusCode());
     assertEquals(expectedResponseBody, entity.getBody());
-***REMOVED***
-***REMOVED***
+  }
+}

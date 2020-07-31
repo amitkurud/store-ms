@@ -16,18 +16,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataMongoTest(properties = ***REMOVED***
+@DataMongoTest(properties = {
         "spring.cloud.config.enabled: false",
         "spring.data.mongodb.auto-index-creation: true",
-        "app.database.host: localhost"***REMOVED***)
-class PersistenceTests ***REMOVED***
+        "app.database.host: localhost"})
+class PersistenceTests {
 
   @Autowired private RecommendationRepository repository;
 
   private RecommendationEntity savedEntity;
 
   @BeforeEach
-  public void setupDb() ***REMOVED***
+  public void setupDb() {
     repository.deleteAll().block();
 
     RecommendationEntity entity = new RecommendationEntity(1, 2, "a", 3, "c");
@@ -35,10 +35,10 @@ class PersistenceTests ***REMOVED***
 
     assert savedEntity != null;
     assertEqualsRecommendation(entity, savedEntity);
-***REMOVED***
+  }
 
   @Test
-  public void create() ***REMOVED***
+  public void create() {
 
     var newEntity = new RecommendationEntity(1, 3, "a", 3, "c");
     repository.save(newEntity).block();
@@ -49,10 +49,10 @@ class PersistenceTests ***REMOVED***
     assertEqualsRecommendation(newEntity, foundEntity);
 
     assertEquals(2L, repository.count().block());
-***REMOVED***
+  }
 
   @Test
-  public void update() ***REMOVED***
+  public void update() {
     savedEntity.setAuthor("a2");
     repository.save(savedEntity).block();
 
@@ -62,35 +62,35 @@ class PersistenceTests ***REMOVED***
 
     assertEquals(1, foundEntity.getVersion());
     assertEquals("a2", foundEntity.getAuthor());
-***REMOVED***
+  }
 
   @Test
-  public void delete() ***REMOVED***
+  public void delete() {
     repository.delete(savedEntity).block();
     assertEquals(false, repository.existsById(savedEntity.getId()).block());
-***REMOVED***
+  }
 
   @Test
-  public void getByProductId() ***REMOVED***
+  public void getByProductId() {
     List<RecommendationEntity> entityList =
             repository.findByProductId(savedEntity.getProductId()).collectList().block();
 
     assertThat(entityList, hasSize(1));
     assertEqualsRecommendation(savedEntity, entityList.get(0));
-***REMOVED***
+  }
 
   @Test
-  public void duplicateError() ***REMOVED***
+  public void duplicateError() {
 
     Assertions.assertThrows(
         DuplicateKeyException.class,
         () -> repository
                 .save(new RecommendationEntity(1, 2, "a", 3, "c"))
                 .block());
-***REMOVED***
+  }
 
   @Test
-  public void optimisticLockError() ***REMOVED***
+  public void optimisticLockError() {
 
     // Store the saved entity in two separate entity objects
     RecommendationEntity entity1 = repository.findById(savedEntity.getId()).block(),
@@ -107,15 +107,15 @@ class PersistenceTests ***REMOVED***
       This should fail since the second entity now holds a old version number,
       i.e. a Optimistic Lock Error.
     */
-    try ***REMOVED***
+    try {
       assert entity2 != null;
 
       entity2.setAuthor("a2");
       repository.save(entity2).block();
 
       fail("Expected an OptimisticLockingFailureException");
-***REMOVED*** catch (OptimisticLockingFailureException ignored) ***REMOVED***
-***REMOVED***
+    } catch (OptimisticLockingFailureException ignored) {
+    }
 
     // Get the updated entity from the database and verify its new sate
     var updatedEntity = repository.findById(savedEntity.getId()).block();
@@ -124,10 +124,10 @@ class PersistenceTests ***REMOVED***
 
     assertEquals(1, updatedEntity.getVersion());
     assertEquals("a1", updatedEntity.getAuthor());
-***REMOVED***
+  }
 
   private void assertEqualsRecommendation(
-      RecommendationEntity expectedEntity, RecommendationEntity actualEntity) ***REMOVED***
+      RecommendationEntity expectedEntity, RecommendationEntity actualEntity) {
     assertEquals(expectedEntity.getId(), actualEntity.getId());
     assertEquals(expectedEntity.getVersion(), actualEntity.getVersion());
     assertEquals(expectedEntity.getProductId(), actualEntity.getProductId());
@@ -135,5 +135,5 @@ class PersistenceTests ***REMOVED***
     assertEquals(expectedEntity.getAuthor(), actualEntity.getAuthor());
     assertEquals(expectedEntity.getRating(), actualEntity.getRating());
     assertEquals(expectedEntity.getContent(), actualEntity.getContent());
-***REMOVED***
-***REMOVED***
+  }
+}

@@ -14,10 +14,10 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
  * @version v1.0
  */
 @TestConfiguration
-public class TestSecurityConfig ***REMOVED***
+public class TestSecurityConfig {
 
   @Bean
-  public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) ***REMOVED***
+  public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
     return http
             .csrf()
               .disable()
@@ -25,5 +25,5 @@ public class TestSecurityConfig ***REMOVED***
               .anyExchange().permitAll()
             .and()
             .build();
-***REMOVED***
-***REMOVED***
+  }
+}

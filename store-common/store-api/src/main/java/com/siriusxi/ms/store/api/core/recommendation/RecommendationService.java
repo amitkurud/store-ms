@@ -15,7 +15,7 @@ import reactor.core.publisher.Flux;
  * @version v0.2
  * @since v0.1
  */
-public interface RecommendationService ***REMOVED***
+public interface RecommendationService {
   /**
    * Get all recommendations for specific product by product id. It is a Non-Blocking API.
    *
@@ -32,9 +32,9 @@ public interface RecommendationService ***REMOVED***
    * @return currently created recommendation.
    * @since v0.1
    */
-  default Recommendation createRecommendation(Recommendation body) ***REMOVED***
+  default Recommendation createRecommendation(Recommendation body) {
     return null;
-***REMOVED***
+  }
 
   /**
    * Delete all product recommendations.
@@ -42,5 +42,5 @@ public interface RecommendationService ***REMOVED***
    * @param productId to delete recommendations for.
    * @since v0.1
    */
-  default void deleteRecommendations(int productId) ***REMOVED******REMOVED***
-***REMOVED***
+  default void deleteRecommendations(int productId) {}
+}

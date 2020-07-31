@@ -21,7 +21,7 @@ import static java.util.logging.Level.FINE;
 
 @Service("ReviewServiceImpl")
 @Log4j2
-public class ReviewServiceImpl implements ReviewService ***REMOVED***
+public class ReviewServiceImpl implements ReviewService {
 
   private final ReviewRepository repository;
   private final ReviewMapper mapper;
@@ -31,67 +31,67 @@ public class ReviewServiceImpl implements ReviewService ***REMOVED***
   @Autowired
   public ReviewServiceImpl(
           Scheduler scheduler, ReviewRepository repository, ReviewMapper mapper,
-          ServiceUtil serviceUtil) ***REMOVED***
+          ServiceUtil serviceUtil) {
     this.repository = repository;
     this.mapper = mapper;
     this.serviceUtil = serviceUtil;
     this.scheduler = scheduler;
-***REMOVED***
+  }
 
   @Override
-  public Review createReview(Review body) ***REMOVED***
+  public Review createReview(Review body) {
 
     isValidProductId(body.getProductId());
 
-    try ***REMOVED***
+    try {
       ReviewEntity entity = mapper.apiToEntity(body);
       ReviewEntity newEntity = repository.save(entity);
 
       log.debug(
-          "createReview: created a review entity: ***REMOVED******REMOVED***/***REMOVED******REMOVED***", body.getProductId(), body.getReviewId());
+          "createReview: created a review entity: {}/{}", body.getProductId(), body.getReviewId());
       return mapper.entityToApi(newEntity);
 
-***REMOVED*** catch (DataIntegrityViolationException dive) ***REMOVED***
+    } catch (DataIntegrityViolationException dive) {
       throw new InvalidInputException(
           "Duplicate key, Product Id: "
               + body.getProductId()
               + ", Review Id:"
               + body.getReviewId());
-***REMOVED***
-***REMOVED***
+    }
+  }
 
   @Override
-  public Flux<Review> getReviews(int productId) ***REMOVED***
+  public Flux<Review> getReviews(int productId) {
 
     isValidProductId(productId);
 
     return asyncFlux(() -> Flux.fromIterable(getByProductId(productId))).log(null, FINE);
-***REMOVED***
+}
 
-  protected List<Review> getByProductId(int productId) ***REMOVED***
+  protected List<Review> getByProductId(int productId) {
 
     List<Review> list = mapper.entityListToApiList(repository.findByProductId(productId));
     list.forEach(e ->
             e.setServiceAddress(serviceUtil.getServiceAddress()));
 
-    log.debug("getReviews: response size: ***REMOVED******REMOVED***", list.size());
+    log.debug("getReviews: response size: {}", list.size());
 
     return list;
-***REMOVED***
+  }
 
   @Override
-  public void deleteReviews(int productId) ***REMOVED***
+  public void deleteReviews(int productId) {
     isValidProductId(productId);
     log.debug(
-        "deleteReviews: tries to delete reviews for the product with productId: ***REMOVED******REMOVED***", productId);
+        "deleteReviews: tries to delete reviews for the product with productId: {}", productId);
     repository.deleteAll(repository.findByProductId(productId));
-***REMOVED***
+  }
 
-  private void isValidProductId(int productId) ***REMOVED***
+  private void isValidProductId(int productId) {
     if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
-***REMOVED***
+  }
 
-  private <T> Flux<T> asyncFlux(Supplier<Publisher<T>> publisherSupplier) ***REMOVED***
+  private <T> Flux<T> asyncFlux(Supplier<Publisher<T>> publisherSupplier) {
     return Flux.defer(publisherSupplier).subscribeOn(scheduler);
-***REMOVED***
-***REMOVED***
+  }
+}

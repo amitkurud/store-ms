@@ -97,16 +97,16 @@
                 <plugin>
                     <groupId>com.spotify</groupId>
                     <artifactId>dockerfile-maven-plugin</artifactId>
-                    <version>$***REMOVED***maven.plugin.dockerfile.version***REMOVED***</version>
+                    <version>${maven.plugin.dockerfile.version}</version>
                     <configuration>
                         <dockerfile>Dockerfile</dockerfile>
-                        <repository>$***REMOVED***docker.repo.image.prefix***REMOVED***/$***REMOVED***project.artifactId***REMOVED***</repository>
+                        <repository>${docker.repo.image.prefix}/${project.artifactId}</repository>
                         <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
                         <buildArgs>
-                            <JAR_FILE>target/$***REMOVED***project.build.finalName***REMOVED***.jar</JAR_FILE>
-                            <IMAGE_VERSION>$***REMOVED***project.version***REMOVED***</IMAGE_VERSION>
-                            <IMAGE_NAME>$***REMOVED***project.name***REMOVED***</IMAGE_NAME>
-                            <MAINTAINER>$***REMOVED***maintainer.name***REMOVED*** ($***REMOVED***maintainer.email***REMOVED***)</MAINTAINER>
+                            <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+                            <IMAGE_VERSION>${project.version}</IMAGE_VERSION>
+                            <IMAGE_NAME>${project.name}</IMAGE_NAME>
+                            <MAINTAINER>${maintainer.name} (${maintainer.email})</MAINTAINER>
                         </buildArgs>
                     </configuration>
                 </plugin>
@@ -119,7 +119,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>properties-maven-plugin</artifactId>
-                <version>$***REMOVED***maven.plugin.properties.version***REMOVED***</version>
+                <version>${maven.plugin.properties.version}</version>
                 <executions>
                     <execution>
                         <phase>initialize</phase>
@@ -130,7 +130,7 @@
                             <!--To continue working if file is messing when set to true -->
                             <quiet>false</quiet>
                             <files>
-                                <file>$***REMOVED***project.config.file.location***REMOVED***</file>
+                                <file>${project.config.file.location}</file>
                             </files>
                         </configuration>
                     </execution>
@@ -183,11 +183,11 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <dotGitDirectory>$***REMOVED***project.basedir***REMOVED***/.git</dotGitDirectory>
+                    <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
                     <prefix>git</prefix>
                     <verbose>false</verbose>
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>$***REMOVED***project.build.outputDirectory***REMOVED***/git.properties
+                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties
                     </generateGitPropertiesFilename>
                     <!--
                          Very important to make sure that the format is set to "properties"
@@ -205,7 +205,7 @@
                         <!-- verify that the current repository is not dirty -->
                         <validationProperty>
                             <name>validating git dirty</name>
-                            <!--<value>$***REMOVED***git.dirty***REMOVED***</value>-->
+                            <!--<value>${git.dirty}</value>-->
                             <value>false</value>
                             <shouldMatchTo>false</shouldMatchTo>
                         </validationProperty>
@@ -220,7 +220,7 @@
             <id>docker-build</id>
             <activation>
                 <file>
-                    <exists>$***REMOVED***basedir***REMOVED***/Dockerfile</exists>
+                    <exists>${basedir}/Dockerfile</exists>
                 </file>
             </activation>
             <properties>
@@ -239,7 +239,7 @@
                                     <goal>build</goal>
                                 </goals>
                                 <configuration>
-                                    <tag>$***REMOVED***docker.image.default.tag***REMOVED***</tag>
+                                    <tag>${docker.image.default.tag}</tag>
                                 </configuration>
                             </execution>
                             <execution>
@@ -249,7 +249,7 @@
                                     <goal>tag</goal>
                                 </goals>
                                 <configuration>
-                                    <tag>$***REMOVED***project.version***REMOVED***</tag>
+                                    <tag>${project.version}</tag>
                                 </configuration>
                             </execution>
                             <execution>

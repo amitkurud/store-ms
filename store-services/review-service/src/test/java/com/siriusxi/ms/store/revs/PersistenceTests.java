@@ -20,28 +20,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
-@DataJpaTest(properties = ***REMOVED***"spring.cloud.config.enabled: false"***REMOVED***)
+@DataJpaTest(properties = {"spring.cloud.config.enabled: false"})
 @Transactional(propagation = NOT_SUPPORTED)
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class PersistenceTests ***REMOVED***
+class PersistenceTests {
 
   @Autowired private ReviewRepository repository;
 
   private ReviewEntity savedEntity;
 
   @BeforeEach
-  public void setupDb() ***REMOVED***
+  public void setupDb() {
     repository.deleteAll();
 
     var entity = new ReviewEntity(1, 2, "amazon", "s", "c");
     savedEntity = repository.save(entity);
 
     assertEquals(entity, savedEntity);
-***REMOVED***
+  }
 
   @Test
-  public void create() ***REMOVED***
+  public void create() {
 
     var newEntity = new ReviewEntity(1, 3, "amazon 1", "s", "c");
     repository.save(newEntity);
@@ -51,10 +51,10 @@ class PersistenceTests ***REMOVED***
     assertEquals(newEntity, entity.orElse(new ReviewEntity()));
 
     assertEquals(2, repository.count());
-***REMOVED***
+  }
 
   @Test
-  public void update() ***REMOVED***
+  public void update() {
 
     savedEntity.setAuthor("amazon 2");
     repository.save(savedEntity);
@@ -63,35 +63,35 @@ class PersistenceTests ***REMOVED***
 
     assertEquals(1, (long) foundEntity.getVersion());
     assertEquals("amazon 2", foundEntity.getAuthor());
-***REMOVED***
+  }
 
   @Test
-  public void delete() ***REMOVED***
+  public void delete() {
     repository.delete(savedEntity);
 
     assertFalse(repository.existsById(savedEntity.getId()));
-***REMOVED***
+  }
 
   @Test
-  public void getByProductId() ***REMOVED***
+  public void getByProductId() {
     List<ReviewEntity> entityList = repository.findByProductId(savedEntity.getProductId());
 
     assertThat(entityList, hasSize(1));
     assertEquals(savedEntity, entityList.get(0));
-***REMOVED***
+  }
 
   @Test
-  public void duplicateError() ***REMOVED***
+  public void duplicateError() {
 
     Assertions.assertThrows(
             DataIntegrityViolationException.class,
             () -> repository.save(new ReviewEntity(
                     1, 2, "amazon 1",
                     "s", "c")));
-***REMOVED***
+  }
 
   @Test
-  public void optimisticLockError() ***REMOVED***
+  public void optimisticLockError() {
 
     // Store the saved entity in two separate entity objects
     ReviewEntity entity1 = repository.findById(savedEntity.getId()).orElse(new ReviewEntity()),
@@ -106,18 +106,18 @@ class PersistenceTests ***REMOVED***
       This should fail since the second entity now holds a old version number,
       i.e. a Optimistic Lock Error
     */
-    try ***REMOVED***
+    try {
       entity2.setAuthor("amazon 2");
       repository.save(entity2);
 
       fail("Expected an OptimisticLockingFailureException");
-***REMOVED*** catch (OptimisticLockingFailureException ignored) ***REMOVED***
-***REMOVED***
+    } catch (OptimisticLockingFailureException ignored) {
+    }
 
     // Get the updated entity from the database and verify its new sate
     var updatedEntity = repository.findById(savedEntity.getId()).orElse(new ReviewEntity());
 
     assertEquals(1, updatedEntity.getVersion());
     assertEquals("amazon 1", updatedEntity.getAuthor());
-***REMOVED***
-***REMOVED***
+  }
+}

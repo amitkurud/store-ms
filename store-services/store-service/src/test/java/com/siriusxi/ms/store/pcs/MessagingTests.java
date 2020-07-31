@@ -39,13 +39,13 @@ import static org.springframework.http.HttpStatus.OK;
      configure TestSecurityConfig to override the
      existing security configuration.
     */
-    classes = ***REMOVED***StoreServiceApplication.class, TestSecurityConfig.class***REMOVED***,
-    properties = ***REMOVED***
+    classes = {StoreServiceApplication.class, TestSecurityConfig.class},
+    properties = {
             "spring.main.allow-bean-definition-overriding: true",
             "eureka.client.enabled: false",
             "spring.cloud.config.enabled: false"
-***REMOVED***)
-class MessagingTests ***REMOVED***
+    })
+class MessagingTests {
 
   public static final String BASE_URL = "/store/api/v1/products/";
 
@@ -58,14 +58,14 @@ class MessagingTests ***REMOVED***
   @Autowired private MessageCollector collector;
 
   @BeforeEach
-  public void setUp() ***REMOVED***
+  public void setUp() {
     queueProducts = getQueue(channels.outputProducts());
     queueRecommendations = getQueue(channels.outputRecommendations());
     queueReviews = getQueue(channels.outputReviews());
-***REMOVED***
+  }
 
   @Test
-  public void createCompositeProduct1() ***REMOVED***
+  public void createCompositeProduct1() {
 
     ProductAggregate composite = new ProductAggregate(1, "name", 1, null, null, null);
     postAndVerifyProduct(composite);
@@ -83,10 +83,10 @@ class MessagingTests ***REMOVED***
     // Assert none recommendations and review events
     assertEquals(0, queueRecommendations.size());
     assertEquals(0, queueReviews.size());
-***REMOVED***
+  }
 
   @Test
-  public void createCompositeProduct2() ***REMOVED***
+  public void createCompositeProduct2() {
 
     ProductAggregate composite =
         new ProductAggregate(
@@ -145,10 +145,10 @@ class MessagingTests ***REMOVED***
                 null));
 
     assertThat(queueReviews, receivesPayloadThat(sameEventExceptCreatedAt(expectedReviewEvent)));
-***REMOVED***
+  }
 
   @Test
-  public void deleteCompositeProduct() ***REMOVED***
+  public void deleteCompositeProduct() {
 
     deleteAndVerifyProduct(1);
 
@@ -172,13 +172,13 @@ class MessagingTests ***REMOVED***
 
     Event<Integer, Product> expectedReviewEvent = new Event<>(DELETE, 1, null);
     assertThat(queueReviews, receivesPayloadThat(sameEventExceptCreatedAt(expectedReviewEvent)));
-***REMOVED***
+  }
 
-  private BlockingQueue<Message<?>> getQueue(MessageChannel messageChannel) ***REMOVED***
+  private BlockingQueue<Message<?>> getQueue(MessageChannel messageChannel) {
     return collector.forChannel(messageChannel);
-***REMOVED***
+  }
 
-  private void postAndVerifyProduct(ProductAggregate compositeProduct) ***REMOVED***
+  private void postAndVerifyProduct(ProductAggregate compositeProduct) {
     client
         .post()
         .uri(BASE_URL)
@@ -186,14 +186,14 @@ class MessagingTests ***REMOVED***
         .exchange()
         .expectStatus()
         .isEqualTo(OK);
-***REMOVED***
+  }
 
-  private void deleteAndVerifyProduct(int productId) ***REMOVED***
+  private void deleteAndVerifyProduct(int productId) {
     client
         .delete()
         .uri(BASE_URL.concat(valueOf(productId)))
         .exchange()
         .expectStatus()
         .isEqualTo(OK);
-***REMOVED***
-***REMOVED***
+  }
+}

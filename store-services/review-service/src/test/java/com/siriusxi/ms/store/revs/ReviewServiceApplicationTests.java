@@ -26,10 +26,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
-    properties = ***REMOVED***"spring.datasource.url=jdbc:h2:mem:review-db",
-                  "spring.cloud.config.enabled: false"***REMOVED***)
+    properties = {"spring.datasource.url=jdbc:h2:mem:review-db",
+                  "spring.cloud.config.enabled: false"})
 @ActiveProfiles("test")
-class ReviewServiceApplicationTests ***REMOVED***
+class ReviewServiceApplicationTests {
 
   private final String BASE_URI = "/reviews";
 
@@ -43,13 +43,13 @@ class ReviewServiceApplicationTests ***REMOVED***
   private AbstractMessageChannel input = null;
 
   @BeforeEach
-  public void setupDb() ***REMOVED***
+  public void setupDb() {
     input = (AbstractMessageChannel) channels.input();
     repository.deleteAll();
-***REMOVED***
+  }
 
   @Test
-  public void getReviewsByProductId() ***REMOVED***
+  public void getReviewsByProductId() {
 
     int productId = 1;
 
@@ -65,10 +65,10 @@ class ReviewServiceApplicationTests ***REMOVED***
         .jsonPath("$.length()").isEqualTo(3)
         .jsonPath("$[2].productId").isEqualTo(productId)
         .jsonPath("$[2].reviewId").isEqualTo(3);
-***REMOVED***
+  }
 
   @Test
-  public void duplicateError() ***REMOVED***
+  public void duplicateError() {
 
     int productId = 1;
     int reviewId = 1;
@@ -79,22 +79,22 @@ class ReviewServiceApplicationTests ***REMOVED***
 
     assertEquals(1, repository.count());
 
-    try ***REMOVED***
+    try {
       sendCreateReviewEvent(productId, reviewId);
       fail("Expected a MessagingException here!");
-***REMOVED*** catch (MessagingException me) ***REMOVED***
-      if (me.getCause() instanceof InvalidInputException iie)	***REMOVED***
+    } catch (MessagingException me) {
+      if (me.getCause() instanceof InvalidInputException iie)	{
         assertEquals("Duplicate key, Product Id: 1, Review Id:1", iie.getMessage());
-  ***REMOVED*** else ***REMOVED***
+      } else {
         fail("Expected a InvalidInputException as the root cause!");
-  ***REMOVED***
-***REMOVED***
+      }
+    }
 
     assertEquals(1, repository.count());
-***REMOVED***
+  }
 
   @Test
-  public void deleteReviews() ***REMOVED***
+  public void deleteReviews() {
 
     int productId = 1;
     int reviewId = 1;
@@ -106,34 +106,34 @@ class ReviewServiceApplicationTests ***REMOVED***
     assertEquals(0, repository.findByProductId(productId).size());
 
     sendDeleteReviewEvent(productId);
-***REMOVED***
+  }
 
   @Test
-  public void getReviewsMissingParameter() ***REMOVED***
+  public void getReviewsMissingParameter() {
 
     getAndVerifyReviewsByProductId("", BAD_REQUEST)
         .jsonPath("$.path").isEqualTo(BASE_URI)
         .jsonPath("$.message")
             .isEqualTo("Required int parameter 'productId' is not present");
-***REMOVED***
+  }
 
   @Test
-  public void getReviewsInvalidParameter() ***REMOVED***
+  public void getReviewsInvalidParameter() {
 
     getAndVerifyReviewsByProductId("?productId=no-integer", BAD_REQUEST)
         .jsonPath("$.path").isEqualTo(BASE_URI)
         .jsonPath("$.message").isEqualTo("Type mismatch.");
-***REMOVED***
+  }
 
   @Test
-  public void getReviewsNotFound() ***REMOVED***
+  public void getReviewsNotFound() {
 
     getAndVerifyReviewsByProductId("?productId=213", OK)
             .jsonPath("$.length()").isEqualTo(0);
-***REMOVED***
+  }
 
   @Test
-  public void getReviewsInvalidParameterNegativeValue() ***REMOVED***
+  public void getReviewsInvalidParameterNegativeValue() {
 
     int productIdInvalid = -1;
 
@@ -141,15 +141,15 @@ class ReviewServiceApplicationTests ***REMOVED***
             UNPROCESSABLE_ENTITY)
         .jsonPath("$.path").isEqualTo(BASE_URI)
         .jsonPath("$.message").isEqualTo("Invalid productId: " + productIdInvalid);
-***REMOVED***
+  }
 
   private WebTestClient.BodyContentSpec getAndVerifyReviewsByProductId(
-          int productId) ***REMOVED***
+          int productId) {
     return getAndVerifyReviewsByProductId("?productId=" + productId, HttpStatus.OK);
-***REMOVED***
+  }
 
   private WebTestClient.BodyContentSpec getAndVerifyReviewsByProductId(
-      String productIdQuery, HttpStatus expectedStatus) ***REMOVED***
+      String productIdQuery, HttpStatus expectedStatus) {
     return client
         .get()
         .uri(BASE_URI + productIdQuery)
@@ -158,17 +158,17 @@ class ReviewServiceApplicationTests ***REMOVED***
         .expectStatus().isEqualTo(expectedStatus)
         .expectHeader().contentType(APPLICATION_JSON)
         .expectBody();
-***REMOVED***
+  }
 
-  private void sendCreateReviewEvent(int productId, int reviewId) ***REMOVED***
+  private void sendCreateReviewEvent(int productId, int reviewId) {
     Review review = new Review(productId, reviewId, "Author " + reviewId,
             "Subject " + reviewId, "Content " + reviewId, "SA");
     Event<Integer, Review> event = new Event<>(CREATE, productId, review);
     input.send(new GenericMessage<>(event));
-***REMOVED***
+  }
 
-  private void sendDeleteReviewEvent(int productId) ***REMOVED***
+  private void sendDeleteReviewEvent(int productId) {
     Event<Integer, Review> event = new Event<>(DELETE, productId, null);
     input.send(new GenericMessage<>(event));
-***REMOVED***
-***REMOVED***
+  }
+}

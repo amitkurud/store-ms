@@ -17,18 +17,18 @@ import java.util.Map;
  * <p>This class adds ad-hoc support in order to better support the other samples in the repo.
  */
 @FrameworkEndpoint
-class JwkSetEndpoint ***REMOVED***
+class JwkSetEndpoint {
   KeyPair keyPair;
 
-  public JwkSetEndpoint(KeyPair keyPair) ***REMOVED***
+  public JwkSetEndpoint(KeyPair keyPair) {
     this.keyPair = keyPair;
-***REMOVED***
+  }
 
   @GetMapping("/.well-known/jwks.json")
   @ResponseBody
-  public Map<String, Object> getKey() ***REMOVED***
+  public Map<String, Object> getKey() {
     RSAPublicKey publicKey = (RSAPublicKey) this.keyPair.getPublic();
     RSAKey key = new RSAKey.Builder(publicKey).build();
     return new JWKSet(key).toJSONObject();
-***REMOVED***
-***REMOVED***
+  }
+}

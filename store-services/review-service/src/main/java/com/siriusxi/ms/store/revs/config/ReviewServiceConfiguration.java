@@ -11,17 +11,17 @@ import java.util.concurrent.Executors;
 
 @Configuration
 @Log4j2
-public class ReviewServiceConfiguration ***REMOVED***
+public class ReviewServiceConfiguration {
 
-    @Value("$***REMOVED***spring.datasource.hikari.maximum-pool-size:10***REMOVED***")
+    @Value("${spring.datasource.hikari.maximum-pool-size:10}")
     Integer connectionPoolSize;
 
     @Bean
-    public Scheduler jdbcScheduler() ***REMOVED***
-        log.info("Creates a jdbcScheduler with connectionPoolSize = ***REMOVED******REMOVED***", connectionPoolSize);
+    public Scheduler jdbcScheduler() {
+        log.info("Creates a jdbcScheduler with connectionPoolSize = {}", connectionPoolSize);
         return Schedulers.fromExecutor(Executors.newFixedThreadPool(connectionPoolSize));
-***REMOVED***
+    }
 
 
 
-***REMOVED***
+}

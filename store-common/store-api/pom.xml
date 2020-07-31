@@ -27,7 +27,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>$***REMOVED***spring.boot.dependencies.version***REMOVED***</version>
+                <version>${spring.boot.dependencies.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

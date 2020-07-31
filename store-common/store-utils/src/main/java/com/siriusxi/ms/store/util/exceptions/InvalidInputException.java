@@ -1,18 +1,18 @@
 package com.siriusxi.ms.store.util.exceptions;
 
-public class InvalidInputException extends RuntimeException ***REMOVED***
+public class InvalidInputException extends RuntimeException {
 
-  public InvalidInputException() ***REMOVED******REMOVED***
+  public InvalidInputException() {}
 
-  public InvalidInputException(String message) ***REMOVED***
+  public InvalidInputException(String message) {
     super(message);
-***REMOVED***
+  }
 
-  public InvalidInputException(String message, Throwable cause) ***REMOVED***
+  public InvalidInputException(String message, Throwable cause) {
     super(message, cause);
-***REMOVED***
+  }
 
-  public InvalidInputException(Throwable cause) ***REMOVED***
+  public InvalidInputException(Throwable cause) {
     super(cause);
-***REMOVED***
-***REMOVED***
+  }
+}

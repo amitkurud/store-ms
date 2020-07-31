@@ -7,16 +7,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
-public class EdgeServer ***REMOVED***
+public class EdgeServer {
 
 	@Bean
 	@LoadBalanced
-	public WebClient.Builder loadBalancedWebClientBuilder() ***REMOVED***
+	public WebClient.Builder loadBalancedWebClientBuilder() {
 		return WebClient.builder();
-	***REMOVED***
+	}
 
-	public static void main(String[] args) ***REMOVED***
+	public static void main(String[] args) {
 		SpringApplication.run(EdgeServer.class, args);
-	***REMOVED***
+	}
 
-***REMOVED***
+}

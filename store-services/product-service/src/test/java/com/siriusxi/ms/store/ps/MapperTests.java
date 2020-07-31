@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MapperTests ***REMOVED***
+class MapperTests {
 
   private final ProductMapper mapper = ProductMapper.INSTANCE;
 
   @Test
-  public void mapperTests() ***REMOVED***
+  public void mapperTests() {
 
     assertNotNull(mapper);
 
@@ -32,5 +32,5 @@ class MapperTests ***REMOVED***
     assertEquals(api.getName(), api2.getName());
     assertEquals(api.getWeight(), api2.getWeight());
     assertNull(api2.getServiceAddress());
-***REMOVED***
-***REMOVED***
+  }
+}

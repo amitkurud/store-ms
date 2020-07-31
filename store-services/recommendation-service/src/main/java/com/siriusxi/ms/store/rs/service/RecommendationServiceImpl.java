@@ -13,7 +13,7 @@ import reactor.core.publisher.Flux;
 
 @Service("RecommendationServiceImpl")
 @Log4j2
-public class RecommendationServiceImpl implements RecommendationService ***REMOVED***
+public class RecommendationServiceImpl implements RecommendationService {
 
   private final RecommendationRepository repository;
 
@@ -23,14 +23,14 @@ public class RecommendationServiceImpl implements RecommendationService ***REMOV
 
   @Autowired
   public RecommendationServiceImpl(
-      RecommendationRepository repository, RecommendationMapper mapper, ServiceUtil serviceUtil) ***REMOVED***
+      RecommendationRepository repository, RecommendationMapper mapper, ServiceUtil serviceUtil) {
     this.repository = repository;
     this.mapper = mapper;
     this.serviceUtil = serviceUtil;
-***REMOVED***
+  }
 
   @Override
-  public Recommendation createRecommendation(Recommendation body) ***REMOVED***
+  public Recommendation createRecommendation(Recommendation body) {
 
     isValidProductId(body.getProductId());
 
@@ -43,10 +43,10 @@ public class RecommendationServiceImpl implements RecommendationService ***REMOV
                             + body.getProductId() + ", Recommendation Id:"
                             + body.getRecommendationId()))
             .map(mapper::entityToApi).block();
-***REMOVED***
+  }
 
   @Override
-  public Flux<Recommendation> getRecommendations(int productId) ***REMOVED***
+  public Flux<Recommendation> getRecommendations(int productId) {
 
     isValidProductId(productId);
 
@@ -54,32 +54,32 @@ public class RecommendationServiceImpl implements RecommendationService ***REMOV
             .findByProductId(productId)
             .log()
             .map(mapper::entityToApi)
-            .map(e -> ***REMOVED***
+            .map(e -> {
               e.setServiceAddress(serviceUtil.getServiceAddress());
               return e;
-        ***REMOVED***);
+            });
 
       //FIXME check how to add log to flux
-    //log.debug("getRecommendations: response size: ***REMOVED******REMOVED***", list.size());
-***REMOVED***
+    //log.debug("getRecommendations: response size: {}", list.size());
+  }
 
   @Override
-  public void deleteRecommendations(int productId) ***REMOVED***
+  public void deleteRecommendations(int productId) {
     isValidProductId(productId);
 
     log.debug(
         """ 
            deleteRecommendations: tries to delete recommendations 
-           for the product with productId: ***REMOVED******REMOVED***
+           for the product with productId: {}
            """,
         productId);
 
     repository
             .deleteAll(repository.findByProductId(productId))
             .block();
-***REMOVED***
+  }
 
-  private void isValidProductId(int productId) ***REMOVED***
+  private void isValidProductId(int productId) {
     if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
-***REMOVED***
-***REMOVED***
+  }
+}

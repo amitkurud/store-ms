@@ -7,5 +7,5 @@ import org.junit.runner.RunWith;
 
 //@RunWith(JUnitPlatform.class)
 @SuiteDisplayName("Store Service Testing Suite")
-@SelectClasses(value = ***REMOVED***StoreServiceApplicationTests.class, MessagingTests.class***REMOVED***)
-class StoreServiceTestingSuite ***REMOVED******REMOVED***
+@SelectClasses(value = {StoreServiceApplicationTests.class, MessagingTests.class})
+class StoreServiceTestingSuite {}

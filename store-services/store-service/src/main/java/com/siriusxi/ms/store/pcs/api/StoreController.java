@@ -11,43 +11,43 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @Log4j2
-public class StoreController implements StoreEndpoint ***REMOVED***
+public class StoreController implements StoreEndpoint {
 
   /** Store service business logic interface. */
   private final StoreService storeService;
 
   @Autowired
-  public StoreController(@Qualifier("StoreServiceImpl") StoreService storeService) ***REMOVED***
+  public StoreController(@Qualifier("StoreServiceImpl") StoreService storeService) {
     this.storeService = storeService;
-***REMOVED***
+  }
 
   /**
-   * ***REMOVED***@inheritDoc***REMOVED***
+   * {@inheritDoc}
    *
    * @return final product.
    */
   @Override
-  public Mono<ProductAggregate> getProduct(int id, int delay, int faultPercent) ***REMOVED***
+  public Mono<ProductAggregate> getProduct(int id, int delay, int faultPercent) {
     return storeService.getProduct(id, delay, faultPercent);
-***REMOVED***
+  }
 
   /**
-   * ***REMOVED***@inheritDoc***REMOVED***
+   * {@inheritDoc}
    *
    * @return nothing.
    */
   @Override
-  public Mono<Void> createProduct(ProductAggregate body) ***REMOVED***
+  public Mono<Void> createProduct(ProductAggregate body) {
     return storeService.createProduct(body);
-***REMOVED***
+  }
 
   /**
-   * ***REMOVED***@inheritDoc***REMOVED***
+   * {@inheritDoc}
    *
    * @return nothing.
    */
   @Override
-  public Mono<Void> deleteProduct(int id) ***REMOVED***
+  public Mono<Void> deleteProduct(int id) {
     return storeService.deleteProduct(id);
-***REMOVED***
-***REMOVED***
+  }
+}

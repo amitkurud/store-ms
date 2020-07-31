@@ -10,18 +10,18 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import reactor.test.StepVerifier;
 
-@DataMongoTest(properties = ***REMOVED***
+@DataMongoTest(properties = {
         "spring.cloud.config.enabled: false",
         "spring.data.mongodb.auto-index-creation: true",
-        "app.database.host: localhost"***REMOVED***)
-class PersistenceTests ***REMOVED***
+        "app.database.host: localhost"})
+class PersistenceTests {
 
   @Autowired private ProductRepository repository;
 
   private ProductEntity savedEntity;
 
   @BeforeEach
-  public void setupDb() ***REMOVED***
+  public void setupDb() {
 
     StepVerifier.create(repository.deleteAll()).verifyComplete();
 
@@ -29,15 +29,15 @@ class PersistenceTests ***REMOVED***
 
     StepVerifier.create(repository.save(entity))
         .expectNextMatches(
-            createdEntity -> ***REMOVED***
+            createdEntity -> {
               savedEntity = createdEntity;
               return areProductEqual(entity, savedEntity);
-        ***REMOVED***)
+            })
         .verifyComplete();
-***REMOVED***
+  }
 
   @Test
-  public void create() ***REMOVED***
+  public void create() {
 
     var newEntity = new ProductEntity(2, "n", 2);
 
@@ -51,10 +51,10 @@ class PersistenceTests ***REMOVED***
         .verifyComplete();
 
     StepVerifier.create(repository.count()).expectNext(2L).verifyComplete();
-***REMOVED***
+  }
 
   @Test
-  public void update() ***REMOVED***
+  public void update() {
     savedEntity.setName("n2");
 
     StepVerifier.create(repository.save(savedEntity))
@@ -65,35 +65,35 @@ class PersistenceTests ***REMOVED***
         .expectNextMatches(
             foundEntity -> foundEntity.getVersion().equals(1) && foundEntity.getName().equals("n2"))
         .verifyComplete();
-***REMOVED***
+  }
 
   @Test
-  public void delete() ***REMOVED***
+  public void delete() {
     StepVerifier.create(repository.delete(savedEntity)).verifyComplete();
 
     StepVerifier.create(repository.existsById(savedEntity.getId()))
         .expectNext(false)
         .verifyComplete();
-***REMOVED***
+  }
 
   @Test
-  public void getByProductId() ***REMOVED***
+  public void getByProductId() {
 
     StepVerifier.create(repository.findByProductId(savedEntity.getProductId()))
         .expectNextMatches(foundEntity -> areProductEqual(savedEntity, foundEntity))
         .verifyComplete();
-***REMOVED***
+  }
 
   @Test
-  public void duplicateError() ***REMOVED***
+  public void duplicateError() {
     StepVerifier
             .create(repository.save(new ProductEntity(savedEntity.getProductId(), "n", 1)))
         .expectError(DuplicateKeyException.class)
         .verify();
-***REMOVED***
+  }
 
   @Test
-  public void optimisticLockError() ***REMOVED***
+  public void optimisticLockError() {
 
     // Store the saved entity in two separate entity objects
     ProductEntity entity1 = repository.findById(savedEntity.getId()).block(),
@@ -120,13 +120,13 @@ class PersistenceTests ***REMOVED***
         .expectNextMatches(
             foundEntity -> foundEntity.getVersion() == 1 && foundEntity.getName().equals("n1"))
         .verifyComplete();
-***REMOVED***
+  }
 
-  private boolean areProductEqual(ProductEntity expectedEntity, ProductEntity actualEntity) ***REMOVED***
+  private boolean areProductEqual(ProductEntity expectedEntity, ProductEntity actualEntity) {
     return (expectedEntity.getId().equals(actualEntity.getId()))
         && (expectedEntity.getVersion().equals(actualEntity.getVersion()))
         && (expectedEntity.getProductId() == actualEntity.getProductId())
         && (expectedEntity.getName().equals(actualEntity.getName()))
         && (expectedEntity.getWeight() == actualEntity.getWeight());
-***REMOVED***
-***REMOVED***
+  }
+}

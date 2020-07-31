@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 @Repository
-public interface ProductRepository extends ReactiveCrudRepository<ProductEntity, String> ***REMOVED***
+public interface ProductRepository extends ReactiveCrudRepository<ProductEntity, String> {
 
   Mono<ProductEntity> findByProductId(int productId);
-***REMOVED***
+}

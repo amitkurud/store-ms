@@ -6,9 +6,9 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 
 @SpringBootApplication
 @EnableConfigServer
-public class CentralizedConfigServer ***REMOVED***
+public class CentralizedConfigServer {
 
-  public static void main(String[] args) ***REMOVED***
+  public static void main(String[] args) {
     SpringApplication.run(CentralizedConfigServer.class, args);
-***REMOVED***
-***REMOVED***
+  }
+}

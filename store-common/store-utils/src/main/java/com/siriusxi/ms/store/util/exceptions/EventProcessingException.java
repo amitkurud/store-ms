@@ -1,18 +1,18 @@
 package com.siriusxi.ms.store.util.exceptions;
 
-public class EventProcessingException extends RuntimeException ***REMOVED***
-    public EventProcessingException() ***REMOVED***
-***REMOVED***
+public class EventProcessingException extends RuntimeException {
+    public EventProcessingException() {
+    }
 
-    public EventProcessingException(String message) ***REMOVED***
+    public EventProcessingException(String message) {
         super(message);
-***REMOVED***
+    }
 
-    public EventProcessingException(String message, Throwable cause) ***REMOVED***
+    public EventProcessingException(String message, Throwable cause) {
         super(message, cause);
-***REMOVED***
+    }
 
-    public EventProcessingException(Throwable cause) ***REMOVED***
+    public EventProcessingException(Throwable cause) {
         super(cause);
-***REMOVED***
-***REMOVED***
+    }
+}

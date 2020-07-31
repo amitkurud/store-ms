@@ -32,34 +32,34 @@ import static org.springframework.security.core.context.ReactiveSecurityContextH
 
 @Service("StoreServiceImpl")
 @Log4j2
-public class StoreServiceImpl implements StoreService ***REMOVED***
+public class StoreServiceImpl implements StoreService {
 
   private final ServiceUtil serviceUtil;
   private final StoreIntegration integration;
   private final SecurityContext nullSC = new SecurityContextImpl();
 
   @Autowired
-  public StoreServiceImpl(ServiceUtil serviceUtil, StoreIntegration integration) ***REMOVED***
+  public StoreServiceImpl(ServiceUtil serviceUtil, StoreIntegration integration) {
     this.serviceUtil = serviceUtil;
     this.integration = integration;
-***REMOVED***
+  }
 
   @Override
-  public Mono<Void> createProduct(ProductAggregate body) ***REMOVED***
+  public Mono<Void> createProduct(ProductAggregate body) {
     return getContext().doOnSuccess(sc -> createProductImpl(sc, body)).then();
-***REMOVED***
+  }
 
-  private void createProductImpl(SecurityContext sc, ProductAggregate body) ***REMOVED***
-    try ***REMOVED***
+  private void createProductImpl(SecurityContext sc, ProductAggregate body) {
+    try {
 
       log.debug(
-          "createProduct: creates a new composite entity for productId: ***REMOVED******REMOVED***", body.productId());
+          "createProduct: creates a new composite entity for productId: {}", body.productId());
 
       logAuthorizationInfo(sc);
 
       integration.createProduct(new Product(body.productId(), body.name(), body.weight(), null));
 
-      if (body.recommendations() != null && !body.recommendations().isEmpty()) ***REMOVED***
+      if (body.recommendations() != null && !body.recommendations().isEmpty()) {
         body.recommendations()
             .forEach(
                 r ->
@@ -71,9 +71,9 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
                             r.rate(),
                             r.content(),
                             null)));
-  ***REMOVED***
+      }
 
-      if (body.reviews() != null && !body.reviews().isEmpty()) ***REMOVED***
+      if (body.reviews() != null && !body.reviews().isEmpty()) {
         body.reviews()
             .forEach(
                 r ->
@@ -85,17 +85,17 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
                             r.subject(),
                             r.content(),
                             null)));
-  ***REMOVED***
-      log.debug("createProduct: composite entities created for productId: ***REMOVED******REMOVED***", body.productId());
+      }
+      log.debug("createProduct: composite entities created for productId: {}", body.productId());
 
-***REMOVED*** catch (RuntimeException re) ***REMOVED***
-      log.warn("createProduct failed: ***REMOVED******REMOVED***", re.toString());
+    } catch (RuntimeException re) {
+      log.warn("createProduct failed: {}", re.toString());
       throw re;
-***REMOVED***
-***REMOVED***
+    }
+  }
 
   @Override
-  public Mono<ProductAggregate> getProduct(int productId, int delay, int faultPercent) ***REMOVED***
+  public Mono<ProductAggregate> getProduct(int productId, int delay, int faultPercent) {
     return Mono.zip(
             values ->
                 createProductAggregate(
@@ -112,53 +112,53 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
                             getProductFallbackValue(productId)),
             integration.getRecommendations(productId).collectList(),
             integration.getReviews(productId).collectList())
-        .doOnError(ex -> log.warn("getProduct failed: ***REMOVED******REMOVED***", ex.toString()))
+        .doOnError(ex -> log.warn("getProduct failed: {}", ex.toString()))
         .log();
-***REMOVED***
+  }
 
   @Override
-  public Mono<Void> deleteProduct(int productId) ***REMOVED***
+  public Mono<Void> deleteProduct(int productId) {
     return getContext().doOnSuccess(sc -> deleteProductImpl(sc, productId)).then();
-***REMOVED***
+  }
 
-  private void deleteProductImpl(SecurityContext sc, int productId) ***REMOVED***
-    try ***REMOVED***
+  private void deleteProductImpl(SecurityContext sc, int productId) {
+    try {
 
-      log.debug("deleteProduct: Deletes a product aggregate for productId: ***REMOVED******REMOVED***", productId);
+      log.debug("deleteProduct: Deletes a product aggregate for productId: {}", productId);
       logAuthorizationInfo(sc);
 
       integration.deleteProduct(productId);
       integration.deleteRecommendations(productId);
       integration.deleteReviews(productId);
 
-      log.debug("deleteProduct: aggregate entities deleted for productId: ***REMOVED******REMOVED***", productId);
+      log.debug("deleteProduct: aggregate entities deleted for productId: {}", productId);
 
-***REMOVED*** catch (RuntimeException re) ***REMOVED***
-      log.warn("deleteProduct failed: ***REMOVED******REMOVED***", re.toString());
+    } catch (RuntimeException re) {
+      log.warn("deleteProduct failed: {}", re.toString());
       throw re;
-***REMOVED***
-***REMOVED***
+    }
+  }
 
-  private Product getProductFallbackValue(int productId) ***REMOVED***
+  private Product getProductFallbackValue(int productId) {
 
-    log.warn("Creating a fallback product for productId = ***REMOVED******REMOVED***", productId);
+    log.warn("Creating a fallback product for productId = {}", productId);
 
-    if (productId == 14) ***REMOVED***
+    if (productId == 14) {
       String errMsg = "Product Id: " + productId + " not found in fallback cache!";
       log.warn(errMsg);
       throw new NotFoundException(errMsg);
-***REMOVED***
+    }
 
     return new Product(
         productId, "Fallback product" + productId, productId, serviceUtil.getServiceAddress());
-***REMOVED***
+  }
 
   private ProductAggregate createProductAggregate(
       SecurityContext sc,
       Product product,
       List<Recommendation> recommendations,
       List<Review> reviews,
-      String serviceAddress) ***REMOVED***
+      String serviceAddress) {
 
     logAuthorizationInfo(sc);
 
@@ -202,7 +202,7 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
 
     return new ProductAggregate(
         productId, name, weight, recommendationSummaries, reviewSummaries, serviceAddresses);
-***REMOVED***
+  }
 
   /*
    * Methods logAuthorizationInfo(SecurityContext sc),
@@ -215,22 +215,22 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
    * ReactiveSecurityContextHolder.getContext().
    *
    */
-  private void logAuthorizationInfo(SecurityContext sc) ***REMOVED***
+  private void logAuthorizationInfo(SecurityContext sc) {
     if (sc != null
         && sc.getAuthentication() != null
-        && sc.getAuthentication() instanceof JwtAuthenticationToken) ***REMOVED***
+        && sc.getAuthentication() instanceof JwtAuthenticationToken) {
       Jwt jwtToken = ((JwtAuthenticationToken) sc.getAuthentication()).getToken();
       logAuthorizationInfo(jwtToken);
-***REMOVED*** else ***REMOVED***
+    } else {
       log.warn("No JWT based Authentication supplied, running tests are we?");
-***REMOVED***
-***REMOVED***
+    }
+  }
 
-  private void logAuthorizationInfo(Jwt jwt) ***REMOVED***
-    if (jwt == null) ***REMOVED***
+  private void logAuthorizationInfo(Jwt jwt) {
+    if (jwt == null) {
       log.warn("No JWT supplied, running tests are we?");
-***REMOVED*** else ***REMOVED***
-      if (log.isDebugEnabled()) ***REMOVED***
+    } else {
+      if (log.isDebugEnabled()) {
         URL issuer = jwt.getIssuer();
         List<String> audience = jwt.getAudience();
         Object subject = jwt.getClaims().get("sub");
@@ -238,13 +238,13 @@ public class StoreServiceImpl implements StoreService ***REMOVED***
         Object expires = jwt.getClaims().get("exp");
 
         log.debug(
-            "Authorization info: Subject: ***REMOVED******REMOVED***, scopes: ***REMOVED******REMOVED***, expires ***REMOVED******REMOVED***: issuer: ***REMOVED******REMOVED***, audience: ***REMOVED******REMOVED***",
+            "Authorization info: Subject: {}, scopes: {}, expires {}: issuer: {}, audience: {}",
             subject,
             scopes,
             expires,
             issuer,
             audience);
-  ***REMOVED***
-***REMOVED***
-***REMOVED***
-***REMOVED***
+      }
+    }
+  }
+}

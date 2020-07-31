@@ -27,7 +27,7 @@ management:
 logging:
     level:
         root: info
-***REMOVED***
+---
 spring:
     profiles: docker
     cloud:

@@ -17,7 +17,7 @@ import java.util.List;
  * @version v4.0
  * @since v0.1
  */
-public interface ReviewService ***REMOVED***
+public interface ReviewService {
 
   /**
    * Get all reviews for specific product by product id.
@@ -34,12 +34,12 @@ public interface ReviewService ***REMOVED***
    * @param body review to be created.
    * @return just created review.
    */
-  default Review createReview(Review body)***REMOVED***return null;***REMOVED***
+  default Review createReview(Review body){return null;}
 
   /**
    * Delete all product reviews.
    *
    * @param productId to delete its reviews.
    */
-  default void deleteReviews(int productId)***REMOVED******REMOVED***
-***REMOVED***
+  default void deleteReviews(int productId){}
+}

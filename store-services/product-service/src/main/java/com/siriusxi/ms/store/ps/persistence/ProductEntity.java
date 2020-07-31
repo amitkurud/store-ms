@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "products")
 @Data
 @NoArgsConstructor
-public class ProductEntity ***REMOVED***
+public class ProductEntity {
   @Id private String id;
 
   @Version private Integer version;
@@ -22,9 +22,9 @@ public class ProductEntity ***REMOVED***
 
   private int weight;
 
-  public ProductEntity(int productId, String name, int weight) ***REMOVED***
+  public ProductEntity(int productId, String name, int weight) {
     this.productId = productId;
     this.name = name;
     this.weight = weight;
-***REMOVED***
-***REMOVED***
+  }
+}

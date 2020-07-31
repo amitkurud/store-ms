@@ -16,33 +16,33 @@ import static springfox.documentation.builders.RequestHandlerSelectors.basePacka
 import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
 
 @Configuration
-public class StoreServiceConfiguration ***REMOVED***
+public class StoreServiceConfiguration {
 
-  @Value("$***REMOVED***api.common.version***REMOVED***")
+  @Value("${api.common.version}")
   private String apiVersion;
 
-  @Value("$***REMOVED***api.common.title***REMOVED***")
+  @Value("${api.common.title}")
   private String apiTitle;
 
-  @Value("$***REMOVED***api.common.description***REMOVED***")
+  @Value("${api.common.description}")
   private String apiDescription;
 
-  @Value("$***REMOVED***api.common.termsOfServiceUrl***REMOVED***")
+  @Value("${api.common.termsOfServiceUrl}")
   private String apiTermsOfServiceUrl;
 
-  @Value("$***REMOVED***api.common.license***REMOVED***")
+  @Value("${api.common.license}")
   private String apiLicense;
 
-  @Value("$***REMOVED***api.common.licenseUrl***REMOVED***")
+  @Value("${api.common.licenseUrl}")
   private String apiLicenseUrl;
 
-  @Value("$***REMOVED***api.common.contact.name***REMOVED***")
+  @Value("${api.common.contact.name}")
   private String apiContactName;
 
-  @Value("$***REMOVED***api.common.contact.url***REMOVED***")
+  @Value("${api.common.contact.url}")
   private String apiContactUrl;
 
-  @Value("$***REMOVED***api.common.contact.email***REMOVED***")
+  @Value("${api.common.contact.email}")
   private String apiContactEmail;
 
   /**
@@ -51,7 +51,7 @@ public class StoreServiceConfiguration ***REMOVED***
    * @return Docket swagger configuration
    */
   @Bean
-  public Docket apiDocumentation() ***REMOVED***
+  public Docket apiDocumentation() {
 
     return new Docket(SWAGGER_2)
         .select()
@@ -85,11 +85,11 @@ public class StoreServiceConfiguration ***REMOVED***
                 apiLicense,
                 apiLicenseUrl,
                 emptyList()));
-***REMOVED***
+  }
 
   @Bean
   @LoadBalanced
-  public WebClient.Builder loadBalancedWebClientBuilder() ***REMOVED***
+  public WebClient.Builder loadBalancedWebClientBuilder() {
     return WebClient.builder();
-***REMOVED***
-***REMOVED***
+  }
+}

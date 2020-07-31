@@ -14,13 +14,13 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 @Table(
         name = "review",
-    indexes = ***REMOVED***
+    indexes = {
       @Index(name = "review_unique_idx", unique = true, columnList = "productId, reviewId")
-***REMOVED***)
+    })
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class ReviewEntity ***REMOVED***
+public class ReviewEntity {
 
   @Id
   @GeneratedValue(strategy = IDENTITY)
@@ -42,4 +42,4 @@ public class ReviewEntity ***REMOVED***
   @NonNull
   @NotBlank
   private String content;
-***REMOVED***
+}

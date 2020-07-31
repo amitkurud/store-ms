@@ -16,7 +16,7 @@ eureka:
     # for development set it to false in order to not register itself to its peer.
     register-with-eureka: false #Do you register yourself with Eureka Server?
     fetch-registry: false #Do not get registration information through eureka
-    service-url.defaultZone: http://$***REMOVED***eureka.instance.hostname***REMOVED***:$***REMOVED***server.port***REMOVED***/eureka/
+    service-url.defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
   server:
     # Make the number of renewals required to prevent an emergency tiny (probably 0)
     renewal-percent-threshold: 0.49

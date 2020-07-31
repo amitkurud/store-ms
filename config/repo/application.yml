@@ -12,7 +12,7 @@ app:
     port: 8761
     user: mt
     pass: p
-    # pass: '***REMOVED***cipher***REMOVED***a672bc1a5c86b877ade72bca188ac4b6d33e7a91c3b524cbd86c8f031d1344c8'
+    # pass: '{cipher}a672bc1a5c86b877ade72bca188ac4b6d33e7a91c3b524cbd86c8f031d1344c8'
   database:
     mongo:
       host: localhost
@@ -31,14 +31,14 @@ spring:
     loadbalancer.ribbon.enabled: false
   # Massaging provider configurations
     stream.kafka.binder:
-      brokers: $***REMOVED***app.messaging.kafka.broker***REMOVED***
+      brokers: ${app.messaging.kafka.broker}
       defaultBrokerPort: 9092
   rabbitmq:
-    host: $***REMOVED***app.messaging.rabbitmq.host***REMOVED***
+    host: ${app.messaging.rabbitmq.host}
     port: 5672
     username: guest
     password: guest
-    #password: '***REMOVED***cipher***REMOVED***702b8ae88ce0d606c42cd89dd20c43be1100951373416f5eb6f2ab57b0288665'
+    #password: '{cipher}702b8ae88ce0d606c42cd89dd20c43be1100951373416f5eb6f2ab57b0288665'
   # Distributed Tracking configs
   zipkin.sender.type: rabbit
   sleuth:
@@ -53,7 +53,7 @@ eureka:
   client:
     healthcheck.enabled: true
     service-url:
-      defaultZone: http://$***REMOVED***app.eureka.user***REMOVED***:$***REMOVED***app.eureka.pass***REMOVED***@$***REMOVED***app.eureka.host***REMOVED***:$***REMOVED***app.eureka.port***REMOVED***/eureka/
+      defaultZone: http://${app.eureka.user}:${app.eureka.pass}@${app.eureka.host}:${app.eureka.port}/eureka/
     initial-instance-info-replication-interval-seconds: 5
     registry-fetch-interval-seconds: 5
 
@@ -84,7 +84,7 @@ logging.level:
 # Also profiles could be separated in its owen file
 # with file name format of "application-docker.yaml"
 # docker profile
-***REMOVED***
+---
 spring:
   profiles: docker
   jmx.enabled: false
@@ -102,7 +102,7 @@ app:
     host: auth-server
 
 # Kafka profile
-***REMOVED***
+---
 spring:
   profiles: kafka
   cloud.stream.defaultBinder: kafka
