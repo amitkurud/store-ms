@@ -21,7 +21,7 @@ spring:
           producer.required-groups: auditGroup
 
   security.oauth2.resourceserver:
-    jwt.jwk-set-uri: http://$***REMOVED***app.auth-server.host***REMOVED***:$***REMOVED***app.auth-server.port***REMOVED***/.well-known/jwks.json
+    jwt.jwk-set-uri: http://${app.auth-server.host}:${app.auth-server.port}/.well-known/jwks.json
 
 # Logging configs
 logging:
@@ -133,22 +133,22 @@ resilience4j.retry:
       retryExceptions:
         - org.springframework.web.reactive.function.client.WebClientResponseException$InternalServerError
 
-# ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***--
+# -----------------------------------------------
 # This is a docker specific profile properties
 # Also profiles could be separated in its owen file
 # with file name format of "application-docker.yaml"
-***REMOVED***
+---
 spring.profiles: docker
 
 server.port: 8080
 
-***REMOVED***
+---
 spring:
   profiles: external-OAuth-Provider
   security.oauth2.resourceserver:
     jwt.jwk-set-uri: https://dev-taman.eu.auth0.com/.well-known/jwks.json
 
-***REMOVED***
+---
 spring:
   profiles: streaming_partitioned
   cloud.stream.bindings:

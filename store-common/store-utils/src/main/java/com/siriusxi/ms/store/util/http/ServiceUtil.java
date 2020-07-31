@@ -10,36 +10,36 @@ import java.net.UnknownHostException;
 
 @Component
 @Log4j2
-public class ServiceUtil ***REMOVED***
+public class ServiceUtil {
   private final String port;
 
   private String serviceAddress = null;
 
   @Autowired
-  public ServiceUtil(@Value("$***REMOVED***server.port***REMOVED***") String port) ***REMOVED***
+  public ServiceUtil(@Value("${server.port}") String port) {
     this.port = port;
-***REMOVED***
+  }
 
-  public String getServiceAddress() ***REMOVED***
-    if (serviceAddress == null) ***REMOVED***
+  public String getServiceAddress() {
+    if (serviceAddress == null) {
       serviceAddress = findMyHostname() + "/" + findMyIpAddress() + ":" + port;
-***REMOVED***
+    }
     return serviceAddress;
-***REMOVED***
+  }
 
-  private String findMyHostname() ***REMOVED***
-    try ***REMOVED***
+  private String findMyHostname() {
+    try {
       return InetAddress.getLocalHost().getHostName();
-***REMOVED*** catch (UnknownHostException e) ***REMOVED***
+    } catch (UnknownHostException e) {
       return "unknown host name";
-***REMOVED***
-***REMOVED***
+    }
+  }
 
-  private String findMyIpAddress() ***REMOVED***
-    try ***REMOVED***
+  private String findMyIpAddress() {
+    try {
       return InetAddress.getLocalHost().getHostAddress();
-***REMOVED*** catch (UnknownHostException e) ***REMOVED***
+    } catch (UnknownHostException e) {
       return "unknown IP address";
-***REMOVED***
-***REMOVED***
-***REMOVED***
+    }
+  }
+}

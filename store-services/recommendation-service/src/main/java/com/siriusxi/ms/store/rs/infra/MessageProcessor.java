@@ -15,43 +15,43 @@ import static java.lang.String.*;
 
 @EnableBinding(Sink.class)
 @Log4j2
-public class MessageProcessor ***REMOVED***
+public class MessageProcessor {
 
     private final RecommendationService service;
 
     @Autowired
-    public MessageProcessor(@Qualifier("RecommendationServiceImpl") RecommendationService service) ***REMOVED***
+    public MessageProcessor(@Qualifier("RecommendationServiceImpl") RecommendationService service) {
         this.service = service;
-***REMOVED***
+    }
 
     @StreamListener(target = Sink.INPUT)
-    public void process(Event<Integer, Recommendation> event) ***REMOVED***
+    public void process(Event<Integer, Recommendation> event) {
 
-        log.info("Process message created at ***REMOVED******REMOVED******REMOVED***", event.getEventCreatedAt());
+        log.info("Process message created at {}...", event.getEventCreatedAt());
 
-        switch (event.getEventType()) ***REMOVED***
-            case CREATE -> ***REMOVED***
+        switch (event.getEventType()) {
+            case CREATE -> {
                 Recommendation recommendation = event.getData();
-                log.info("Create recommendation with ID: ***REMOVED******REMOVED***/***REMOVED******REMOVED***", recommendation.getProductId(),
+                log.info("Create recommendation with ID: {}/{}", recommendation.getProductId(),
                         recommendation.getRecommendationId());
                 service.createRecommendation(recommendation);
-        ***REMOVED***
-            case DELETE -> ***REMOVED***
+            }
+            case DELETE -> {
                 int productId = event.getKey();
-                log.info("Delete recommendations with ProductID: ***REMOVED******REMOVED***", productId);
+                log.info("Delete recommendations with ProductID: {}", productId);
                 service.deleteRecommendations(productId);
-        ***REMOVED***
-            default -> ***REMOVED***
+            }
+            default -> {
                 String errorMessage =
                         "Incorrect event type: "
                                 .concat(valueOf(event.getEventType()))
                                 .concat(", expected a CREATE or DELETE event");
                 log.warn(errorMessage);
                 throw new EventProcessingException(errorMessage);
-        ***REMOVED***
-    ***REMOVED***
+            }
+        }
 
         log.info("Message processing done!");
-***REMOVED***
+    }
 
-***REMOVED***
+}

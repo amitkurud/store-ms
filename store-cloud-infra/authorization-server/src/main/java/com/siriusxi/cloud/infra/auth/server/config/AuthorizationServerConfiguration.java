@@ -29,7 +29,7 @@ import java.security.KeyPair;
  * @since 5.0
  */
 @Configuration
-public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter ***REMOVED***
+public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
   private final AuthenticationManager authenticationManager;
   private final KeyPair keyPair;
@@ -39,28 +39,28 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
   public AuthorizationServerConfiguration(
       AuthenticationConfiguration authenticationConfiguration,
       KeyPair keyPair,
-      @Value("$***REMOVED***security.oauth2.authorizationserver.jwt.enabled:true***REMOVED***") boolean jwtEnabled)
-      throws Exception ***REMOVED***
+      @Value("${security.oauth2.authorizationserver.jwt.enabled:true}") boolean jwtEnabled)
+      throws Exception {
 
     this.authenticationManager = authenticationConfiguration.getAuthenticationManager();
     this.keyPair = keyPair;
     this.jwtEnabled = jwtEnabled;
-***REMOVED***
+  }
 
   @Override
-  public void configure(ClientDetailsServiceConfigurer clients) throws Exception ***REMOVED***
+  public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 
     /*
-     Password is prefixed with ***REMOVED***noop***REMOVED*** to indicate to DelegatingPasswordEncoder that
+     Password is prefixed with {noop} to indicate to DelegatingPasswordEncoder that
      NoOpPasswordEncoder should be used.
 
      This is not safe for production, but makes reading in samples easier.
 
      Normally passwords should be hashed using BCrypt.
     */
-    String[] grantTypes = ***REMOVED***"code", "authorization_code", "implicit", "password"***REMOVED***;
+    String[] grantTypes = {"code", "authorization_code", "implicit", "password"};
     var redirectUris = "http://my.redirect.uri";
-    var secret = "***REMOVED***noop***REMOVED***secret";
+    var secret = "{noop}secret";
 
     clients
         .inMemory()
@@ -87,28 +87,28 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
           .secret(secret)
           .scopes("none")
           .accessTokenValiditySeconds(600_000_000);
-***REMOVED***
+  }
 
   @Override
-  public void configure(AuthorizationServerEndpointsConfigurer endpoints) ***REMOVED***
+  public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
 
     endpoints
             .authenticationManager(this.authenticationManager)
             .tokenStore(tokenStore());
 
-    if (this.jwtEnabled) ***REMOVED***
+    if (this.jwtEnabled) {
       endpoints
               .accessTokenConverter(accessTokenConverter());
-***REMOVED***
-***REMOVED***
+    }
+  }
 
   @Bean
-  public TokenStore tokenStore() ***REMOVED***
+  public TokenStore tokenStore() {
     return this.jwtEnabled ? new JwtTokenStore(accessTokenConverter()) : new InMemoryTokenStore();
-***REMOVED***
+  }
 
   @Bean
-  public JwtAccessTokenConverter accessTokenConverter() ***REMOVED***
+  public JwtAccessTokenConverter accessTokenConverter() {
     JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
     converter.setKeyPair(this.keyPair);
 
@@ -117,5 +117,5 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     converter.setAccessTokenConverter(accessTokenConverter);
 
     return converter;
-***REMOVED***
-***REMOVED***
+  }
+}

@@ -16,10 +16,10 @@ import java.security.spec.RSAPublicKeySpec;
  * <p>For simplicity, though, this sample doesn't demonstrate key rotation.
  */
 @Configuration
-class KeyConfig ***REMOVED***
+class KeyConfig {
     @Bean
-    KeyPair keyPair() ***REMOVED***
-        try ***REMOVED***
+    KeyPair keyPair() {
+        try {
             String privateExponent =
                     "3851612021791312596791631935569878540203393691253311342052463788814433805390794604753109719790052408607029530149004451377846406736413270923596916756321977922303381344613407820854322190592787335193581632323728135479679928871596911841005827348430783250026013354350760878678723915119966019947072651782000702927096735228356171563532131162414366310012554312756036441054404004920678199077822575051043273088621405687950081861819700809912238863867947415641838115425624808671834312114785499017269379478439158796130804789241476050832773822038351367878951389438751088021113551495469440016698505614123035099067172660197922333993";
             String modulus =
@@ -32,8 +32,8 @@ class KeyConfig ***REMOVED***
                     new RSAPrivateKeySpec(new BigInteger(modulus), new BigInteger(privateExponent));
             KeyFactory factory = KeyFactory.getInstance("RSA");
             return new KeyPair(factory.generatePublic(publicSpec), factory.generatePrivate(privateSpec));
-    ***REMOVED*** catch (Exception e) ***REMOVED***
+        } catch (Exception e) {
             throw new IllegalArgumentException(e);
-    ***REMOVED***
-***REMOVED***
-***REMOVED***
+        }
+    }
+}

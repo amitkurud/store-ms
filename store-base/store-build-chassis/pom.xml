@@ -46,14 +46,14 @@
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
-                <version>$***REMOVED***springfox.swagger.version***REMOVED***</version>
+                <version>${springfox.swagger.version}</version>
             </dependency>
             <!-- End - API documentation with Swagger -->
             <!-- Start - Spring cloud dependencies -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>$***REMOVED***spring.cloud.version***REMOVED***</version>
+                <version>${spring.cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -107,27 +107,27 @@
             <plugins>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>$***REMOVED***maven.compiler.plugin.version***REMOVED***</version>
+                    <version>${maven.compiler.plugin.version}</version>
                     <configuration>
-                        <release>$***REMOVED***java.version***REMOVED***</release>
+                        <release>${java.version}</release>
                         <compilerArgs>--enable-preview</compilerArgs>
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.mapstruct</groupId>
                                 <artifactId>mapstruct-processor</artifactId>
-                                <version>$***REMOVED***org.mapstruct.version***REMOVED***</version>
+                                <version>${org.mapstruct.version}</version>
                             </path>
                             <path>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
-                                <version>$***REMOVED***org.lombok.version***REMOVED***</version>
+                                <version>${org.lombok.version}</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>$***REMOVED***maven.surefire.plugin.version***REMOVED***</version>
+                    <version>${maven.surefire.plugin.version}</version>
                     <configuration>
                         <argLine>--enable-preview</argLine>
                         <includes>
@@ -138,7 +138,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>$***REMOVED***maven.failsafe.plugin.version***REMOVED***</version>
+                    <version>${maven.failsafe.plugin.version}</version>
                     <configuration>
                         <argLine>--enable-preview</argLine>
                     </configuration>
@@ -151,7 +151,7 @@
                     -->
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>$***REMOVED***maven.plugin.version.version***REMOVED***</version>
+                    <version>${maven.plugin.version.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

@@ -30,12 +30,12 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-spring-webflux</artifactId>
-            <version>$***REMOVED***springfox.swagger.version***REMOVED***</version>
+            <version>${springfox.swagger.version}</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
-            <version>$***REMOVED***springfox.swagger.version***REMOVED***</version>
+            <version>${springfox.swagger.version}</version>
         </dependency>
         <!-- End - API documentation dependencies -->
         <!-- Start - Security dependency -->
@@ -56,22 +56,22 @@
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-spring-boot2</artifactId>
-            <version>$***REMOVED***resilience4j.version***REMOVED***</version>
+            <version>${resilience4j.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-reactor</artifactId>
-            <version>$***REMOVED***resilience4j.version***REMOVED***</version>
+            <version>${resilience4j.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-circuitbreaker</artifactId>
-            <version>$***REMOVED***resilience4j.version***REMOVED***</version>
+            <version>${resilience4j.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-micrometer</artifactId>
-            <version>$***REMOVED***resilience4j.version***REMOVED***</version>
+            <version>${resilience4j.version}</version>
         </dependency>
         <!-- End - Circuit Breaker & Retry support dependency -->
     </dependencies>

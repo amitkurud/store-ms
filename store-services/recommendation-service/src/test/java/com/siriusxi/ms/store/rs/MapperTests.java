@@ -10,12 +10,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MapperTests ***REMOVED***
+class MapperTests {
 
   private final RecommendationMapper mapper = RecommendationMapper.INSTANCE;
 
   @Test
-  public void mapperTests() ***REMOVED***
+  public void mapperTests() {
 
     assertNotNull(mapper);
 
@@ -37,10 +37,10 @@ class MapperTests ***REMOVED***
     assertEquals(api.getRate(), api2.getRate());
     assertEquals(api.getContent(), api2.getContent());
     assertNull(api2.getServiceAddress());
-***REMOVED***
+  }
 
   @Test
-  public void mapperListTests() ***REMOVED***
+  public void mapperListTests() {
 
     assertNotNull(mapper);
 
@@ -69,5 +69,5 @@ class MapperTests ***REMOVED***
     assertEquals(api.getRate(), api2.getRate());
     assertEquals(api.getContent(), api2.getContent());
     assertNull(api2.getServiceAddress());
-***REMOVED***
-***REMOVED***
+  }
+}

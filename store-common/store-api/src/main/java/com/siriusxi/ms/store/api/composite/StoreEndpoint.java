@@ -22,7 +22,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @Api("REST API for Springy Store products information.")
 @RequestMapping("store/api/v1")
-public interface StoreEndpoint extends StoreService ***REMOVED***
+public interface StoreEndpoint extends StoreService {
 
   /**
    * Sample usage:
@@ -34,10 +34,10 @@ public interface StoreEndpoint extends StoreService ***REMOVED***
    * @since v3.0 codename Storm.
    */
   @ApiOperation(
-      value = "$***REMOVED***api.product-composite.get-composite-product.description***REMOVED***",
-      notes = "$***REMOVED***api.product-composite.get-composite-product.notes***REMOVED***")
+      value = "${api.product-composite.get-composite-product.description}",
+      notes = "${api.product-composite.get-composite-product.notes}")
   @ApiResponses(
-      value = ***REMOVED***
+      value = {
         @ApiResponse(
             code = 400,
             message = """
@@ -51,8 +51,8 @@ public interface StoreEndpoint extends StoreService ***REMOVED***
                     Unprocessable entity, input parameters caused the processing to fails.
                     See response message for more information.
                     """)
-  ***REMOVED***)
-  @GetMapping(value = "products/***REMOVED***id***REMOVED***",
+      })
+  @GetMapping(value = "products/{id}",
           produces = APPLICATION_JSON_VALUE)
   @Override
   Mono<ProductAggregate> getProduct(
@@ -64,17 +64,17 @@ public interface StoreEndpoint extends StoreService ***REMOVED***
    *
    * <p><code>curl -X POST $HOST:$PORT/store/api/v1/products \
    *    -H "Content-Type: application/json" --data \
-   *    '***REMOVED***"productId":123,"name":"product 123", "weight":123***REMOVED***'</code></p>
+   *    '{"productId":123,"name":"product 123", "weight":123}'</code></p>
    *
    * @param body of composite product elements definition.
    * @since v3.0 codename Storm.
    * @return Nothing.
    */
   @ApiOperation(
-      value = "$***REMOVED***api.product-composite.create-composite-product.description***REMOVED***",
-      notes = "$***REMOVED***api.product-composite.create-composite-product.notes***REMOVED***")
+      value = "${api.product-composite.create-composite-product.description}",
+      notes = "${api.product-composite.create-composite-product.notes}")
   @ApiResponses(
-      value = ***REMOVED***
+      value = {
         @ApiResponse(
             code = 400,
             message = """
@@ -87,7 +87,7 @@ public interface StoreEndpoint extends StoreService ***REMOVED***
                 Unprocessable entity, input parameters caused the processing to fail. 
                 See response message for more information.
                 """)
-  ***REMOVED***)
+      })
   @PostMapping(
           value = "products",
           consumes = APPLICATION_JSON_VALUE)
@@ -104,10 +104,10 @@ public interface StoreEndpoint extends StoreService ***REMOVED***
    * @return Nothing.
    */
   @ApiOperation(
-      value = "$***REMOVED***api.product-composite.delete-composite-product.description***REMOVED***",
-      notes = "$***REMOVED***api.product-composite.delete-composite-product.notes***REMOVED***")
+      value = "${api.product-composite.delete-composite-product.description}",
+      notes = "${api.product-composite.delete-composite-product.notes}")
   @ApiResponses(
-      value = ***REMOVED***
+      value = {
         @ApiResponse(
             code = 400,
             message ="""
@@ -120,8 +120,8 @@ public interface StoreEndpoint extends StoreService ***REMOVED***
                 Unprocessable entity, input parameters caused the processing to fail. 
                 See response message for more information.
                 """)
-  ***REMOVED***)
-  @DeleteMapping("products/***REMOVED***id***REMOVED***")
+      })
+  @DeleteMapping("products/{id}")
   @Override
   Mono<Void> deleteProduct(@PathVariable int id);
-***REMOVED***
+}

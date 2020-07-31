@@ -12,7 +12,7 @@ spring:
     ## since Spring Boot can deduce it for most databases from the url.
     #driver-class-name: com.mysql.cj.jdbc.Driver
     platform: mysql
-    url: "jdbc:mysql://$***REMOVED***app.database.mysql.host***REMOVED***/review-db?useSSL=false&serverTimezone=UTC"
+    url: "jdbc:mysql://${app.database.mysql.host}/review-db?useSSL=false&serverTimezone=UTC"
     username: user
     password: pwd
     hikari:
@@ -22,10 +22,10 @@ spring:
   flyway:
     #Enable or disable flyway migrations
     enabled: true
-    url: "jdbc:mysql://$***REMOVED***app.database.mysql.host***REMOVED***/$***REMOVED***app.database.mysql.schema***REMOVED***?useSSL=false&serverTimezone=UTC"
+    url: "jdbc:mysql://${app.database.mysql.host}/${app.database.mysql.schema}?useSSL=false&serverTimezone=UTC"
     schemas: review-db
-    user: $***REMOVED***spring.datasource.username***REMOVED***
-    password: $***REMOVED***spring.datasource.password***REMOVED***
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
   cloud:
     # Event-driven messages Stream config
     stream:
@@ -63,11 +63,11 @@ logging.level:
 # This is a docker specific profile properties
 # Also profiles could be separated in its owen file
 # with file name format of "application-docker.yaml"
-***REMOVED***
+---
 spring:
   profiles: docker
   datasource:
-    url: "jdbc:mysql://$***REMOVED***app.database.mysql.host***REMOVED***/$***REMOVED***app.database.mysql.schema***REMOVED***"
+    url: "jdbc:mysql://${app.database.mysql.host}/${app.database.mysql.schema}"
 
 server:
   port: 8080
@@ -78,19 +78,19 @@ app:
       host: mysql
       schema: review-db
 
-***REMOVED***
+---
 spring:
   profiles: streaming_partitioned
   cloud.stream.bindings.input.consumer:
     partitioned: true
     instanceCount: 2
 
-***REMOVED***
+---
 spring:
   profiles: streaming_instance_0
   cloud.stream.bindings.input.consumer.instanceIndex: 0
 
-***REMOVED***
+---
 spring:
   profiles: streaming_instance_1
   cloud.stream.bindings.input.consumer.instanceIndex: 1

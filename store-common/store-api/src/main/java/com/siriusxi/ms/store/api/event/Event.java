@@ -14,22 +14,22 @@ import static lombok.AccessLevel.NONE;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter(NONE)
-public class Event<K, T> ***REMOVED***
+public class Event<K, T> {
 
   private Event.Type eventType;
   private K key;
   private T data;
   private LocalDateTime eventCreatedAt;
 
-  public Event(Type eventType, K key, T data) ***REMOVED***
+  public Event(Type eventType, K key, T data) {
     this.eventType = eventType;
     this.key = key;
     this.data = data;
     this.eventCreatedAt = now();
-***REMOVED***
+  }
 
-  public enum Type ***REMOVED***
+  public enum Type {
     CREATE,
     DELETE
-***REMOVED***
-***REMOVED***
+  }
+}

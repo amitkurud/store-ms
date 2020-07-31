@@ -18,22 +18,22 @@ import java.util.Map;
  * <p>This class adds ad-hoc support in order to better support the other samples in the repo.
  */
 @FrameworkEndpoint
-class IntrospectEndpoint ***REMOVED***
+class IntrospectEndpoint {
   TokenStore tokenStore;
 
-  public IntrospectEndpoint(TokenStore tokenStore) ***REMOVED***
+  public IntrospectEndpoint(TokenStore tokenStore) {
     this.tokenStore = tokenStore;
-***REMOVED***
+  }
 
   @PostMapping("/introspect")
   @ResponseBody
-  public Map<String, Object> introspect(@RequestParam("token") String token) ***REMOVED***
+  public Map<String, Object> introspect(@RequestParam("token") String token) {
     OAuth2AccessToken accessToken = this.tokenStore.readAccessToken(token);
     Map<String, Object> attributes = new HashMap<>();
-    if (accessToken == null || accessToken.isExpired()) ***REMOVED***
+    if (accessToken == null || accessToken.isExpired()) {
       attributes.put("active", false);
       return attributes;
-***REMOVED***
+    }
 
     OAuth2Authentication authentication = this.tokenStore.readAuthentication(token);
 
@@ -43,5 +43,5 @@ class IntrospectEndpoint ***REMOVED***
     attributes.put("sub", authentication.getName());
 
     return attributes;
-***REMOVED***
-***REMOVED***
+  }
+}

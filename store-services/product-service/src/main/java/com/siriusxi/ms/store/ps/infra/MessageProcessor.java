@@ -13,41 +13,41 @@ import org.springframework.cloud.stream.messaging.Sink;
 
 @EnableBinding(Sink.class)
 @Log4j2
-public class MessageProcessor ***REMOVED***
+public class MessageProcessor {
 
     private final ProductService productService;
 
     @Autowired
-    public MessageProcessor(@Qualifier("ProductServiceImpl") ProductService productService) ***REMOVED***
+    public MessageProcessor(@Qualifier("ProductServiceImpl") ProductService productService) {
         this.productService = productService;
-***REMOVED***
+    }
 
     @StreamListener(target = Sink.INPUT)
-    public void process(Event<Integer, Product> event) ***REMOVED***
+    public void process(Event<Integer, Product> event) {
 
-        log.info("Process message created at ***REMOVED******REMOVED******REMOVED***", event.getEventCreatedAt());
+        log.info("Process message created at {}...", event.getEventCreatedAt());
 
-        switch (event.getEventType()) ***REMOVED***
-            case CREATE -> ***REMOVED***
+        switch (event.getEventType()) {
+            case CREATE -> {
                 Product product = event.getData();
-                log.info("Create product with ID: ***REMOVED******REMOVED***", product.getProductId());
+                log.info("Create product with ID: {}", product.getProductId());
                 productService.createProduct(product);
-        ***REMOVED***
-            case DELETE -> ***REMOVED***
-                log.info("Delete product with Product Id: ***REMOVED******REMOVED***", event.getKey());
+            }
+            case DELETE -> {
+                log.info("Delete product with Product Id: {}", event.getKey());
                 productService.deleteProduct(event.getKey());
-        ***REMOVED***
-            default -> ***REMOVED***
+            }
+            default -> {
                 String errorMessage =
                         "Incorrect event type: "
                                 .concat(event.getEventType().toString())
                                 .concat(", expected a CREATE or DELETE event.");
                 log.warn(errorMessage);
                 throw new EventProcessingException(errorMessage);
-        ***REMOVED***
-    ***REMOVED***
+            }
+        }
 
         log.info("Message processing done!");
-***REMOVED***
+    }
 
-***REMOVED***
+}

@@ -8,29 +8,29 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter ***REMOVED***
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final String username;
   private final String password;
 
   @Autowired
   public SecurityConfig(
-      @Value("$***REMOVED***app.eureka.user***REMOVED***") String username,
-      @Value("$***REMOVED***app.eureka.pass***REMOVED***") String password) ***REMOVED***
+      @Value("${app.eureka.user}") String username,
+      @Value("${app.eureka.pass}") String password) {
     this.username = username;
-    this.password = "***REMOVED***noop***REMOVED***".concat(password);
-***REMOVED***
+    this.password = "{noop}".concat(password);
+  }
 
   @Override
-  public void configure(AuthenticationManagerBuilder auth) throws Exception ***REMOVED***
+  public void configure(AuthenticationManagerBuilder auth) throws Exception {
     auth.inMemoryAuthentication()
             .withUser(username)
             .password(password)
             .authorities("USER");
-***REMOVED***
+  }
 
   @Override
-  protected void configure(HttpSecurity http) throws Exception ***REMOVED***
+  protected void configure(HttpSecurity http) throws Exception {
     http
         // Disable CRCF to allow services to register themselves with Eureka
         .csrf()
@@ -39,5 +39,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter ***REMOVED***
           .anyRequest().authenticated()
           .and()
           .httpBasic();
-***REMOVED***
-***REMOVED***
+  }
+}

@@ -9,14 +9,14 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan("com.siriusxi.ms.store")
 @Log4j2
-public class ProductServiceApplication ***REMOVED***
+public class ProductServiceApplication {
 
-  public static void main(String[] args) ***REMOVED***
+  public static void main(String[] args) {
     ConfigurableApplicationContext ctx =
         SpringApplication.run(ProductServiceApplication.class, args);
 
     var mongoDbHost = ctx.getEnvironment().getProperty("spring.data.mongodb.host");
     var mongoDbPort = ctx.getEnvironment().getProperty("spring.data.mongodb.port");
     log.info("Connected to MongoDb: " + mongoDbHost + ":" + mongoDbPort);
-***REMOVED***
-***REMOVED***
+  }
+}

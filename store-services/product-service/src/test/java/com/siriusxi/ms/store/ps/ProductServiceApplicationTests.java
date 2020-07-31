@@ -24,15 +24,15 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
-    properties = ***REMOVED***
+    properties = {
             "spring.data.mongodb.port: 0",
             "eureka.client.enabled: false",
             "spring.cloud.config.enabled: false",
             "spring.sleuth.enabled: false",
             "spring.data.mongodb.auto-index-creation: true",
             "app.database.host: localhost",
-            "server.error.include-message: always"***REMOVED***)
-class ProductServiceApplicationTests ***REMOVED***
+            "server.error.include-message: always"})
+class ProductServiceApplicationTests {
 
   private final String BASE_URI = "/products/";
 
@@ -48,13 +48,13 @@ class ProductServiceApplicationTests ***REMOVED***
   private AbstractMessageChannel input = null;
 
   @BeforeEach
-  public void setupDb() ***REMOVED***
+  public void setupDb() {
     input = (AbstractMessageChannel) channels.input();
     repository.deleteAll().block();
-***REMOVED***
+  }
 
   @Test
-  public void getProductById() ***REMOVED***
+  public void getProductById() {
 
     int productId = 1;
 
@@ -68,10 +68,10 @@ class ProductServiceApplicationTests ***REMOVED***
 
     getAndVerifyProduct(productId, OK)
             .jsonPath("$.productId").isEqualTo(productId);
-***REMOVED***
+  }
 
   @Test
-  public void duplicateError() ***REMOVED***
+  public void duplicateError() {
 
     int productId = 1;
 
@@ -81,20 +81,20 @@ class ProductServiceApplicationTests ***REMOVED***
 
     assertNotNull(repository.findByProductId(productId).block());
 
-    try ***REMOVED***
+    try {
       sendCreateProductEvent(productId);
       fail("Expected a MessagingException here!");
-***REMOVED*** catch (MessagingException me) ***REMOVED***
-      if (me.getCause() instanceof InvalidInputException iie)***REMOVED***
+    } catch (MessagingException me) {
+      if (me.getCause() instanceof InvalidInputException iie){
         assertEquals("Duplicate key, Product Id: ".concat(String.valueOf(productId)), iie.getMessage());
-  ***REMOVED*** else ***REMOVED***
+      } else {
         fail("Expected a InvalidInputException as the root cause!");
-  ***REMOVED***
-***REMOVED***
-***REMOVED***
+      }
+    }
+  }
 
   @Test
-  public void deleteProduct() ***REMOVED***
+  public void deleteProduct() {
 
     int productId = 1;
 
@@ -103,18 +103,18 @@ class ProductServiceApplicationTests ***REMOVED***
 
     sendDeleteProductEvent(productId);
     assertNull(repository.findByProductId(productId).block());
-***REMOVED***
+  }
 
   @Test
-  public void getProductInvalidParameterString() ***REMOVED***
+  public void getProductInvalidParameterString() {
     var uri = BASE_URI.concat("no-integer");
     getAndVerifyProduct(uri, BAD_REQUEST)
         .jsonPath("$.path").isEqualTo(uri)
         .jsonPath("$.message").isEqualTo("Type mismatch.");
-***REMOVED***
+  }
 
   @Test
-  public void getProductNotFound() ***REMOVED***
+  public void getProductNotFound() {
 
     int productIdNotFound = 13;
 
@@ -122,25 +122,25 @@ class ProductServiceApplicationTests ***REMOVED***
         .jsonPath("$.path").isEqualTo(BASE_URI.concat(String.valueOf(productIdNotFound)))
         .jsonPath("$.message")
             .isEqualTo("No product found for productId: ".concat(String.valueOf(productIdNotFound)));
-***REMOVED***
+  }
 
   @Test
-  public void getProductInvalidParameterNegativeValue() ***REMOVED***
+  public void getProductInvalidParameterNegativeValue() {
 
     int productIdInvalid = -1;
 
     getAndVerifyProduct(productIdInvalid, UNPROCESSABLE_ENTITY)
         .jsonPath("$.path").isEqualTo(BASE_URI.concat(String.valueOf(productIdInvalid)))
         .jsonPath("$.message").isEqualTo("Invalid productId: ".concat(String.valueOf(productIdInvalid)));
-***REMOVED***
+  }
 
   private WebTestClient.BodyContentSpec getAndVerifyProduct(
-      int productId, HttpStatus expectedStatus) ***REMOVED***
+      int productId, HttpStatus expectedStatus) {
     return getAndVerifyProduct(BASE_URI.concat(String.valueOf(productId)), expectedStatus);
-***REMOVED***
+  }
 
   private WebTestClient.BodyContentSpec getAndVerifyProduct(
-      String productIdPath, HttpStatus expectedStatus) ***REMOVED***
+      String productIdPath, HttpStatus expectedStatus) {
     return client
         .get()
         .uri(productIdPath)
@@ -149,19 +149,19 @@ class ProductServiceApplicationTests ***REMOVED***
         .expectStatus().isEqualTo(expectedStatus)
         .expectHeader().contentType(APPLICATION_JSON)
         .expectBody();
-***REMOVED***
+  }
 
-  private void sendCreateProductEvent(int productId) ***REMOVED***
+  private void sendCreateProductEvent(int productId) {
     var product = new Product(productId,
             "Name ".concat(String.valueOf(productId)),
             productId,
             "SA");
     Event<Integer, Product> event = new Event<>(CREATE, productId, product);
     input.send(new GenericMessage<>(event));
-***REMOVED***
+  }
 
-  private void sendDeleteProductEvent(int productId) ***REMOVED***
+  private void sendDeleteProductEvent(int productId) {
     Event<Integer, Product> event = new Event<>(DELETE, productId, null);
     input.send(new GenericMessage<>(event));
-***REMOVED***
-***REMOVED***
+  }
+}

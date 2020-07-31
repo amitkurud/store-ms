@@ -26,7 +26,7 @@ public record HttpErrorInfo(
         String path,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ")
         @JsonSerialize(using = ZonedDateTimeSerializer.class)
-        ZonedDateTime timestamp) ***REMOVED***
+        ZonedDateTime timestamp) {
 
     /**
      * Instantiates a new Http error info.
@@ -35,7 +35,7 @@ public record HttpErrorInfo(
      * @param path the request path.
      * @param message the error message.
      */
-public HttpErrorInfo(HttpStatus httpStatus, String path, String message) ***REMOVED***
+public HttpErrorInfo(HttpStatus httpStatus, String path, String message) {
         this(httpStatus, message, path, ZonedDateTime.now());
-***REMOVED***
-***REMOVED***
+    }
+}

@@ -16,16 +16,16 @@ import java.util.Map;
 // TODO add swagger API
 @Configuration
 @Log4j2
-public class GatewayConfiguration ***REMOVED***
+public class GatewayConfiguration {
 
   private final WebClient.Builder webClientBuilder;
 
   private WebClient webClient;
 
   @Autowired
-  public GatewayConfiguration(WebClient.Builder webClientBuilder) ***REMOVED***
+  public GatewayConfiguration(WebClient.Builder webClientBuilder) {
     this.webClientBuilder = webClientBuilder;
-***REMOVED***
+  }
 
   /**
    * This method is to check all the services health status, and Gateway service health will be only
@@ -34,7 +34,7 @@ public class GatewayConfiguration ***REMOVED***
    * @return ReactiveHealthContributor information about all the core microservices.
    */
   @Bean(name = "Core Microservices")
-  ReactiveHealthContributor coreServices() ***REMOVED***
+  ReactiveHealthContributor coreServices() {
 
     ReactiveHealthIndicator productHealthIndicator = () -> getServicesHealth("http://product");
     ReactiveHealthIndicator recommendationHealthIndicator =
@@ -52,12 +52,12 @@ public class GatewayConfiguration ***REMOVED***
             "Authorization Server", authHealthIndicator);
 
     return CompositeReactiveHealthContributor.fromMap(healthIndicators);
-***REMOVED***
+  }
 
-  private Mono<Health> getServicesHealth(String url) ***REMOVED***
+  private Mono<Health> getServicesHealth(String url) {
     url += "/actuator/health";
 
-    log.debug("Will call the Health API on URL: ***REMOVED******REMOVED***", url);
+    log.debug("Will call the Health API on URL: {}", url);
 
     return getWebClient()
             .get().uri(url)
@@ -69,12 +69,12 @@ public class GatewayConfiguration ***REMOVED***
                     .down(ex)
                     .build()))
             .log();
-***REMOVED***
+  }
 
-  private WebClient getWebClient() ***REMOVED***
-    if (webClient == null) ***REMOVED***
+  private WebClient getWebClient() {
+    if (webClient == null) {
       webClient = webClientBuilder.build();
-***REMOVED***
+    }
     return webClient;
-***REMOVED***
-***REMOVED***
+  }
+}

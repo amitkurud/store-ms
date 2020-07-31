@@ -19,5 +19,5 @@ public record ProductAggregate (int productId,
                                 int weight,
                                 List<RecommendationSummary> recommendations,
                                 List<ReviewSummary>reviews,
-                                ServiceAddresses serviceAddresses) ***REMOVED***
-***REMOVED***
+                                ServiceAddresses serviceAddresses) {
+}

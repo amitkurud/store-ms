@@ -11,20 +11,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Tests for ***REMOVED***@link AuthorizationServer***REMOVED***
+ * Tests for {@link AuthorizationServer}
  *
  * @author Mohamed Taman
  * @since 5.0
  */
-@SpringBootTest(properties = ***REMOVED***
+@SpringBootTest(properties = {
         "eureka.client.enabled: false",
-        "spring.cloud.config.enabled: false"***REMOVED***)
+        "spring.cloud.config.enabled: false"})
 @AutoConfigureMockMvc
-class AuthorizationServerTests ***REMOVED***
+class AuthorizationServerTests {
   @Autowired MockMvc mvc;
 
   @Test
-  public void requestTokenWhenUsingPasswordGrantTypeThenOk() throws Exception ***REMOVED***
+  public void requestTokenWhenUsingPasswordGrantTypeThenOk() throws Exception {
 
     this.mvc
         .perform(
@@ -34,13 +34,13 @@ class AuthorizationServerTests ***REMOVED***
                 .param("password", "password")
                 .header("Authorization", "Basic cmVhZGVyOnNlY3JldA=="))
         .andExpect(status().isOk());
-***REMOVED***
+  }
 
   @Test
-  public void requestJwkSetWhenUsingDefaultsThenOk() throws Exception ***REMOVED***
+  public void requestJwkSetWhenUsingDefaultsThenOk() throws Exception {
 
     this.mvc
             .perform(get("/.well-known/jwks.json"))
             .andExpect(status().isOk());
-***REMOVED***
-***REMOVED***
+  }
+}

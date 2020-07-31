@@ -8,8 +8,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       # config server credentials
-      - CONFIG_SERVER_USR=$***REMOVED***CONFIG_SERVER_USR***REMOVED***
-      - CONFIG_SERVER_PWD=$***REMOVED***CONFIG_SERVER_PWD***REMOVED***
+      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
+      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
     depends_on:
       - config-server
       - mongodb
@@ -23,8 +23,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       # config server credentials
-      - CONFIG_SERVER_USR=$***REMOVED***CONFIG_SERVER_USR***REMOVED***
-      - CONFIG_SERVER_PWD=$***REMOVED***CONFIG_SERVER_PWD***REMOVED***
+      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
+      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
     depends_on:
       - config-server
       - mongodb
@@ -38,8 +38,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       # config server credentials
-      - CONFIG_SERVER_USR=$***REMOVED***CONFIG_SERVER_USR***REMOVED***
-      - CONFIG_SERVER_PWD=$***REMOVED***CONFIG_SERVER_PWD***REMOVED***
+      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
+      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
     depends_on:
       - config-server
       - mysql
@@ -54,8 +54,8 @@ services:
       # - SPRING_PROFILES_ACTIVE=external-OAuth-Provider
       - SPRING_PROFILES_ACTIVE=docker
       # config server credentials
-      - CONFIG_SERVER_USR=$***REMOVED***CONFIG_SERVER_USR***REMOVED***
-      - CONFIG_SERVER_PWD=$***REMOVED***CONFIG_SERVER_PWD***REMOVED***
+      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
+      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
     depends_on:
       - config-server
       - rabbitmq
@@ -70,8 +70,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       # config server credentials
-      - CONFIG_SERVER_USR=$***REMOVED***CONFIG_SERVER_USR***REMOVED***
-      - CONFIG_SERVER_PWD=$***REMOVED***CONFIG_SERVER_PWD***REMOVED***
+      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
+      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
     depends_on:
       - config-server
     restart: on-failure
@@ -89,8 +89,8 @@ services:
       - SERVER_SSL_KEY_STORE=file:/keystore/edge.p12
       - SERVER_SSL_KEY_STORE_PASSWORD=password
       # config server credentials
-      - CONFIG_SERVER_USR=$***REMOVED***CONFIG_SERVER_USR***REMOVED***
-      - CONFIG_SERVER_PWD=$***REMOVED***CONFIG_SERVER_PWD***REMOVED***
+      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
+      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
     volumes:
       - ./config/keystore:/keystore
     depends_on:
@@ -106,8 +106,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       # config server credentials
-      - CONFIG_SERVER_USR=$***REMOVED***CONFIG_SERVER_USR***REMOVED***
-      - CONFIG_SERVER_PWD=$***REMOVED***CONFIG_SERVER_PWD***REMOVED***
+      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
+      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
     depends_on:
       - config-server
       - eureka
@@ -119,9 +119,9 @@ services:
     build: store-cloud-infra/config-server
     environment:
       - SPRING_PROFILES_ACTIVE=docker,native
-      - ENCRYPT_KEY=$***REMOVED***CONFIG_SERVER_ENCRYPT_KEY***REMOVED***
-      - SPRING_SECURITY_USER_NAME=$***REMOVED***CONFIG_SERVER_USR***REMOVED***
-      - SPRING_SECURITY_USER_PASSWORD=$***REMOVED***CONFIG_SERVER_PWD***REMOVED***
+      - ENCRYPT_KEY=${CONFIG_SERVER_ENCRYPT_KEY}
+      - SPRING_SECURITY_USER_NAME=${CONFIG_SERVER_USR}
+      - SPRING_SECURITY_USER_PASSWORD=${CONFIG_SERVER_PWD}
     volumes:
       - ./config/repo:/config/repo
     restart: on-failure

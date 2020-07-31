@@ -20,20 +20,20 @@ import reactor.core.publisher.Flux;
  */
 @RestController
 @Log4j2
-public class RecommendationController implements RecommendationEndpoint ***REMOVED***
+public class RecommendationController implements RecommendationEndpoint {
 
   /** Recommendation service business logic interface. */
   private final RecommendationService recommendationService;
 
   @Autowired
   public RecommendationController(
-      @Qualifier("RecommendationServiceImpl") RecommendationService recommendationService) ***REMOVED***
+      @Qualifier("RecommendationServiceImpl") RecommendationService recommendationService) {
     this.recommendationService = recommendationService;
-***REMOVED***
+  }
 
-  /** ***REMOVED***@inheritDoc***REMOVED*** */
+  /** {@inheritDoc} */
   @Override
-  public Flux<Recommendation> getRecommendations(int productId) ***REMOVED***
+  public Flux<Recommendation> getRecommendations(int productId) {
     return recommendationService.getRecommendations(productId);
-***REMOVED***
-***REMOVED***
+  }
+}

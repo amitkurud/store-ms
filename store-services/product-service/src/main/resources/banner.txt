@@ -8,6 +8,6 @@
                                                         | |                  __/ | __/ |                                   
                                                         |_|                 |___/ |___/                                    
 
-:: $***REMOVED***application.title***REMOVED*** (Microservice) :: v$***REMOVED***application.version***REMOVED*** :: Built with Spring Boot :: v$***REMOVED***spring-boot.version***REMOVED***
+:: ${application.title} (Microservice) :: v${application.version} :: Built with Spring Boot :: v${spring-boot.version}
 
 

@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-public interface ReviewRepository extends CrudRepository<ReviewEntity, Integer> ***REMOVED***
+public interface ReviewRepository extends CrudRepository<ReviewEntity, Integer> {
 
   @Transactional(readOnly = true)
   List<ReviewEntity> findByProductId(int productId);
-***REMOVED***
+}

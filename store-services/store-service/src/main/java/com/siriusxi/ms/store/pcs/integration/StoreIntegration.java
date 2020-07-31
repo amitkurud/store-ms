@@ -39,7 +39,7 @@ import static reactor.core.publisher.Flux.empty;
 @EnableBinding(MessageSources.class)
 @Component
 @Log4j2
-public class StoreIntegration implements ProductService, RecommendationService, ReviewService ***REMOVED***
+public class StoreIntegration implements ProductService, RecommendationService, ReviewService {
 
   private final String PRODUCT_ID_QUERY_PARAM = "?productId=";
   private final WebClient.Builder webClientBuilder;
@@ -56,10 +56,10 @@ public class StoreIntegration implements ProductService, RecommendationService, 
           WebClient.Builder webClientBuilder,
           ObjectMapper mapper,
           MessageSources messageSources,
-          @Value("$***REMOVED***app.product-service.host***REMOVED***") String productServiceHost,
-          @Value("$***REMOVED***app.recommendation-service.host***REMOVED***") String recommendationServiceHost,
-          @Value("$***REMOVED***app.review-service.host***REMOVED***") String reviewServiceHost,
-          @Value("$***REMOVED***app.product-service.timeoutSec***REMOVED***") int productServiceTimeoutSec) ***REMOVED***
+          @Value("${app.product-service.host}") String productServiceHost,
+          @Value("${app.recommendation-service.host}") String recommendationServiceHost,
+          @Value("${app.review-service.host}") String reviewServiceHost,
+          @Value("${app.product-service.timeoutSec}") int productServiceTimeoutSec) {
 
     this.webClientBuilder = webClientBuilder;
     this.mapper = mapper;
@@ -71,65 +71,65 @@ public class StoreIntegration implements ProductService, RecommendationService, 
     productServiceUrl = http.concat(productServiceHost);
     recommendationServiceUrl = http.concat(recommendationServiceHost);
     reviewServiceUrl = http.concat(reviewServiceHost);
-***REMOVED***
+  }
 
   @Override
-  public Product createProduct(Product body) ***REMOVED***
-    log.debug("Publishing a create event for a new product ***REMOVED******REMOVED***",body.toString());
+  public Product createProduct(Product body) {
+    log.debug("Publishing a create event for a new product {}",body.toString());
     messageSources
             .outputProducts()
             .send(withPayload(new Event<>(CREATE, body.getProductId(), body)).build());
     return body;
-***REMOVED***
+  }
 
   @Retry(name = "product")
   @CircuitBreaker(name = "product")
   @Override
-  public Mono<Product> getProduct(int productId, int delay, int faultPercent) ***REMOVED***
+  public Mono<Product> getProduct(int productId, int delay, int faultPercent) {
 
   var url = UriComponentsBuilder
           .fromUriString(productServiceUrl
           .concat("/products/")
-          .concat("***REMOVED***productId***REMOVED***?delay=***REMOVED***delay***REMOVED***&faultPercent=***REMOVED***faultPercent***REMOVED***"))
+          .concat("{productId}?delay={delay}&faultPercent={faultPercent}"))
           .build(productId, delay, faultPercent);
 
-    log.debug("Will call the getProduct API on URL: ***REMOVED******REMOVED***", url);
+    log.debug("Will call the getProduct API on URL: {}", url);
 
     return getWebClient()
             .get().uri(url)
             .retrieve().bodyToMono(Product.class)
             .onErrorMap(WebClientResponseException.class, this::handleException)
             .timeout(Duration.ofSeconds(productServiceTimeoutSec));
-***REMOVED***
+  }
 
   @Override
-  public void deleteProduct(int productId) ***REMOVED***
-    log.debug("Publishing a delete event for product id ***REMOVED******REMOVED***", productId);
+  public void deleteProduct(int productId) {
+    log.debug("Publishing a delete event for product id {}", productId);
     messageSources
             .outputProducts()
             .send(withPayload(new Event<>(DELETE, productId, null)).build());
-***REMOVED***
+  }
 
   @Override
-  public Recommendation createRecommendation(Recommendation body) ***REMOVED***
-    log.debug("Publishing a create event for a new recommendation ***REMOVED******REMOVED***",body.toString());
+  public Recommendation createRecommendation(Recommendation body) {
+    log.debug("Publishing a create event for a new recommendation {}",body.toString());
 
     messageSources
             .outputRecommendations()
             .send(withPayload(new Event<>(CREATE, body.getProductId(), body)).build());
 
     return body;
-***REMOVED***
+  }
 
   @Override
-  public Flux<Recommendation> getRecommendations(int productId) ***REMOVED***
+  public Flux<Recommendation> getRecommendations(int productId) {
 
     var url = recommendationServiceUrl
             .concat("/recommendations")
             .concat(PRODUCT_ID_QUERY_PARAM)
             .concat(valueOf(productId));
 
-    log.debug("Will call the getRecommendations API on URL: ***REMOVED******REMOVED***", url);
+    log.debug("Will call the getRecommendations API on URL: {}", url);
 
     /* Return an empty result if something goes wrong to make it possible
        for the composite service to return partial responses
@@ -141,32 +141,32 @@ public class StoreIntegration implements ProductService, RecommendationService, 
             .bodyToFlux(Recommendation.class)
             .log()
             .onErrorResume(error -> empty());
-***REMOVED***
+  }
 
   @Override
-  public void deleteRecommendations(int productId) ***REMOVED***
+  public void deleteRecommendations(int productId) {
     messageSources
             .outputRecommendations()
             .send(withPayload(new Event<>(DELETE, productId, null)).build());
-***REMOVED***
+  }
 
   @Override
-  public Review createReview(Review body) ***REMOVED***
+  public Review createReview(Review body) {
     messageSources
             .outputReviews()
             .send(withPayload(new Event<>(CREATE, body.getProductId(), body)).build());
     return body;
-***REMOVED***
+  }
 
   @Override
-  public Flux<Review> getReviews(int productId) ***REMOVED***
+  public Flux<Review> getReviews(int productId) {
 
     var url = reviewServiceUrl
             .concat("/reviews")
             .concat(PRODUCT_ID_QUERY_PARAM)
             .concat(valueOf(productId));
 
-    log.debug("Will call the getReviews API on URL: ***REMOVED******REMOVED***", url);
+    log.debug("Will call the getReviews API on URL: {}", url);
 
     /* Return an empty result if something goes wrong to make it possible
        for the composite service to return partial responses
@@ -178,48 +178,48 @@ public class StoreIntegration implements ProductService, RecommendationService, 
             .bodyToFlux(Review.class).log()
             .onErrorResume(error -> empty());
 
-***REMOVED***
+  }
 
   @Override
-  public void deleteReviews(int productId) ***REMOVED***
+  public void deleteReviews(int productId) {
     messageSources
             .outputReviews()
             .send(withPayload(new Event<>(DELETE, productId, null)).build());
-***REMOVED***
+  }
 
-  private WebClient getWebClient() ***REMOVED***
-    if (webClient == null) ***REMOVED***
+  private WebClient getWebClient() {
+    if (webClient == null) {
       webClient = webClientBuilder.build();
-***REMOVED***
+    }
     return webClient;
-***REMOVED***
+  }
 
-  private Throwable handleException(Throwable ex) ***REMOVED***
-    if (!(ex instanceof WebClientResponseException wcre)) ***REMOVED***
-      log.warn("Got a unexpected error: ***REMOVED******REMOVED***, will rethrow it", ex.toString());
+  private Throwable handleException(Throwable ex) {
+    if (!(ex instanceof WebClientResponseException wcre)) {
+      log.warn("Got a unexpected error: {}, will rethrow it", ex.toString());
       return ex;
-***REMOVED***
+    }
 
-    return switch (wcre.getStatusCode()) ***REMOVED***
+    return switch (wcre.getStatusCode()) {
       case NOT_FOUND -> new NotFoundException(getErrorMessage(wcre));
       case UNPROCESSABLE_ENTITY -> new InvalidInputException(getErrorMessage(wcre));
-      default -> ***REMOVED***
-        log.warn("Got a unexpected HTTP error: ***REMOVED******REMOVED***, will rethrow it", wcre.getStatusCode());
-        log.warn("Error body: ***REMOVED******REMOVED***", wcre.getResponseBodyAsString());
-      throw wcre;***REMOVED***
-***REMOVED***;
-***REMOVED***
+      default -> {
+        log.warn("Got a unexpected HTTP error: {}, will rethrow it", wcre.getStatusCode());
+        log.warn("Error body: {}", wcre.getResponseBodyAsString());
+      throw wcre;}
+    };
+  }
 
-  private String getErrorMessage(WebClientResponseException ex) ***REMOVED***
-    try ***REMOVED***
+  private String getErrorMessage(WebClientResponseException ex) {
+    try {
       System.out.println(">>>>>>>>>>>>>>>>>>>>>>>:"+ mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).message());
       return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).message();
-***REMOVED*** catch (IOException ioException) ***REMOVED***
+    } catch (IOException ioException) {
       return ex.getMessage();
-***REMOVED***
-***REMOVED***
+    }
+  }
 
-  public interface MessageSources ***REMOVED***
+  public interface MessageSources {
 
     String OUTPUT_PRODUCTS = "output-products";
     String OUTPUT_RECOMMENDATIONS = "output-recommendations";
@@ -233,5 +233,5 @@ public class StoreIntegration implements ProductService, RecommendationService, 
 
     @Output(OUTPUT_REVIEWS)
     MessageChannel outputReviews();
-***REMOVED***
-***REMOVED***
+  }
+}

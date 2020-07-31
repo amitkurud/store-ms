@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
  * @version v5.8
  * @since v0.1
  */
-public interface StoreService ***REMOVED***
+public interface StoreService {
 
   /**
    * Add composite product to the product, review, and recommendation repositories.
@@ -53,4 +53,4 @@ public interface StoreService ***REMOVED***
    * @return void
    */
   Mono<Void> deleteProduct(int id);
-***REMOVED***
+}

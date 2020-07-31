@@ -8,13 +8,13 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
-    properties = ***REMOVED***
+    properties = {
             "eureka.client.enabled: false",
-            "spring.cloud.config.enabled: false"***REMOVED***)
-class EdgeServerTests ***REMOVED***
+            "spring.cloud.config.enabled: false"})
+class EdgeServerTests {
 
   @Test
-  void contextLoads() ***REMOVED***
+  void contextLoads() {
     assertTrue(true);
-***REMOVED***
-***REMOVED***
+  }
+}
